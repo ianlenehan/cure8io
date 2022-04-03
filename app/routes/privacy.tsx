@@ -1,7 +1,23 @@
-import "../styles/privacy.css";
+import { Box, LightMode, GlobalStyle } from "@chakra-ui/react";
+
+export const links = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: "../styles/privacy.css",
+    },
+  ];
+};
 
 function Privacy() {
-  return <div dangerouslySetInnerHTML={{ __html: innerHtml }} />;
+  return (
+    <LightMode>
+      <GlobalStyle />
+      <Box maxWidth="600px" margin="0 auto" paddingTop={10}>
+        <div dangerouslySetInnerHTML={{ __html: innerHtml }} />
+      </Box>
+    </LightMode>
+  );
 }
 
 export default Privacy;
