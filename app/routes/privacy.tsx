@@ -323,7 +323,6 @@ const innerHtml = `<div data-custom-className="body">
         exercise your rights is by filling out our data subject request
         form available here: 
         <span className="question">
-           
           <a
             href="http://www.ianlenehan.com/cure8"
             target="_blank"
@@ -333,7 +332,7 @@ const innerHtml = `<div data-custom-className="body">
             http://www.ianlenehan.com/cure8
           </a>
         </span>
-        , or by contacting us. We will consider and act upon any request
+      , or by contacting us. We will consider and act upon any request
         in accordance with applicable data protection laws.
       </span>
     </span>

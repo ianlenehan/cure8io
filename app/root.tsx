@@ -11,6 +11,8 @@ import {
 import { withEmotionCache } from "@emotion/react";
 import { ChakraProvider } from "@chakra-ui/react";
 
+import Footer from "./components/Footer";
+import theme from "./utils/chakraTheme";
 import { ServerStyleContext, ClientStyleContext } from "./utils/context";
 
 interface DocumentProps {
@@ -61,7 +63,9 @@ const Document = withEmotionCache(
           {children}
           <ScrollRestoration />
           <Scripts />
-          {process.env.NODE_ENV === "development" ? <LiveReload /> : null}
+          {process.env.NODE_ENV !== "development" ? <LiveReload /> : null}
+
+          <Footer />
         </body>
       </html>
     );
@@ -71,7 +75,7 @@ const Document = withEmotionCache(
 export default function App() {
   return (
     <Document>
-      <ChakraProvider>
+      <ChakraProvider {...{ theme }}>
         <Outlet />
       </ChakraProvider>
     </Document>
