@@ -37,11 +37,10 @@ export default function Footer() {
         <Container maxW={"6xl"} py={10}>
           <Flex justifyContent="space-between">
             <Stack align={"flex-start"}>
-              <ListHeader>Legal</ListHeader>
+              <a href="mailto:ian@cure8.io">Contact</a>
               <Link href="/privacy">Privacy Policy</Link>
             </Stack>
             <Stack align={"flex-start"}>
-              <ListHeader>Install App</ListHeader>
               <a
                 href="https://apps.apple.com/au/app/cure8/id1525122380"
                 rel="noreferrer"
