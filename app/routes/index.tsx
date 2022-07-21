@@ -79,7 +79,6 @@ export default function Index() {
       </Stack>
       <iframe
         height="100%"
-        sandbox="allow-forms allow-scripts"
         src={
           "https://23999.sandbox.ignitionapp.com/client-portal/6e5c199d8b269ab0edffd6a0c64525e865c1d338e4a0e6a321cea32945e1e891a63867a25a14d03fd4757204d8/proposal/prop_mlmuhpnkabzqacqa4o2a"
         }
