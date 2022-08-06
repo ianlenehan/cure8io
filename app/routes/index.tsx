@@ -1,5 +1,13 @@
 import { useLoaderData } from "@remix-run/react";
-import { Container, Stack, Heading, Text, Image } from "@chakra-ui/react";
+import { Link as RemixLink } from "@remix-run/react";
+import {
+  Container,
+  Stack,
+  Heading,
+  Text,
+  Image,
+  Button,
+} from "@chakra-ui/react";
 
 import { signOut, getUserSession } from "~/utils/session.server";
 
@@ -33,7 +41,7 @@ export default function Index() {
         textAlign={"center"}
         align={"center"}
         spacing={{ base: 8, md: 10 }}
-        py={{ base: 20, md: 28 }}
+        py={{ base: 40, md: 28 }}
       >
         <Image
           alt="Cure8 Logo"
@@ -41,25 +49,23 @@ export default function Index() {
           src="LogoText@0.25x.png"
           width="250px"
         />
-        <Heading
-          lineHeight={1.1}
-          fontWeight={600}
-          fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
-        >
-          <Text as={"span"} position={"relative"}>
-            Social Content Curation
-          </Text>
+        <Heading lineHeight={1.1} color="gray.700" size="3xl">
+          Social Content Curation
         </Heading>
-        <Text color={"gray.500"}>
+        <Text>
           Curate web content for your friends, such as YouTube videos, blog
           posts and interesting articles. Save links for yourself to view later.
         </Text>
-        <Text color={"gray.500"}>
+        <Text>
           Cure8 is an app that allows you to save links to anything on the
           internet for you or your friends to view later. See a video your
           friend would enjoy? Cure8 it for them! They'll be able to open the app
           and watch it when they're ready.
         </Text>
+
+        <Button as={RemixLink} colorScheme="brand" to="/help">
+          Learn More
+        </Button>
         <Stack
           spacing={{ base: 4, sm: 6 }}
           direction={{ base: "column", sm: "row" }}

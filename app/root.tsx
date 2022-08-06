@@ -15,9 +15,15 @@ import Footer from "./components/Footer";
 import theme from "./utils/chakraTheme";
 import { ServerStyleContext, ClientStyleContext } from "./utils/context";
 
+import styles from "~/styles/index.css";
+
 interface DocumentProps {
   children: React.ReactNode;
 }
+
+export const links = () => {
+  return [{ rel: "stylesheet", href: styles }];
+};
 
 const Document = withEmotionCache(
   ({ children }: DocumentProps, emotionCache) => {

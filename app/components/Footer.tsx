@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import {
   Box,
   Container,
-  Stack,
+  HStack,
   Center,
   Text,
   Image,
@@ -10,6 +10,7 @@ import {
   useColorModeValue,
   Flex,
 } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 
 const ListHeader = ({ children }: { children: ReactNode }) => {
   return (
@@ -23,41 +24,26 @@ export default function Footer() {
   return (
     <footer>
       <Box
-        bg={useColorModeValue("gray.50", "gray.900")}
+        backgroundColor="#fff"
         borderTopWidth={1}
         borderStyle={"solid"}
         borderColor={useColorModeValue("gray.200", "gray.700")}
-        color={useColorModeValue("gray.700", "gray.200")}
-        margin={20}
+        padding={12}
         position="fixed"
         bottom="0"
         left="0"
         right="0"
+        fontSize="12px"
       >
-        <Container maxW={"6xl"} py={10}>
-          <Flex justifyContent="space-between">
-            <Stack align={"flex-start"}>
-              <a href="mailto:ian@cure8.io">Contact</a>
-              <Link href="/privacy">Privacy Policy</Link>
-            </Stack>
-            <Stack align={"flex-start"}>
-              <a
-                href="https://apps.apple.com/au/app/cure8/id1525122380"
-                rel="noreferrer"
-                target="_blank"
-              >
-                <Image
-                  alt="App Store Link"
-                  src="logo-app-store.png"
-                  width="120px"
-                />
-              </a>
-            </Stack>
-          </Flex>
-        </Container>
-
         <Center>
-          <Text>© 2022 Goleno Ltd. All rights reserved</Text>
+          <Stack>
+            <HStack justify="center">
+              <a href="mailto:ian@cure8.io">Contact</a>
+              <Text> | </Text>
+              <Link href="/privacy">Privacy Policy</Link>
+            </HStack>
+            <Text>© 2022 Goleno Ltd. All rights reserved.</Text>
+          </Stack>
         </Center>
       </Box>
     </footer>
