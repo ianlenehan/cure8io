@@ -42,7 +42,7 @@ const Text: ComponentStyleConfig = {
 const Heading: ComponentStyleConfig = {
   baseStyle: {
     color: "rgb(45, 55, 72)",
-    fontFamily: "'PassionOne', sans-serif;",
+    fontFamily: "'Montserrat', sans-serif;",
   },
 };
 

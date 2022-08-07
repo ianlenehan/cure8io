@@ -20,7 +20,9 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: "Getting Started", path: "/help" },
   { name: "Curating Links", path: "/help/links" },
+  { name: "Archiving Links", path: "/help/archiving" },
   { name: "Contacts", path: "/help/contacts" },
+  { name: "Media", path: "/help/media" },
 ];
 
 export default function Help() {
@@ -46,7 +48,14 @@ export default function Help() {
         </DrawerContent>
       </Drawer>
       <Box ml={{ base: 0, md: 60 }} p="4">
-        <Outlet />
+        <Flex
+          alignItems="center"
+          flexDirection="column"
+          minH="100%"
+          marginTop="32px"
+        >
+          <Outlet />
+        </Flex>
       </Box>
     </Box>
   );

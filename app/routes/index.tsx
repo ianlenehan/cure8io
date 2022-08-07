@@ -49,7 +49,7 @@ export default function Index() {
           src="LogoText@0.25x.png"
           width="250px"
         />
-        <Heading lineHeight={1.1} color="gray.700" size="3xl">
+        <Heading lineHeight={1.1} color="gray.700" size="2xl">
           Social Content Curation
         </Heading>
         <Text>
