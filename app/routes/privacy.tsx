@@ -69,9 +69,9 @@ const innerHtml = `<div data-custom-className="body">
       <span style="font-size: 15px; color: #595959;">
         <span style="font-size: 15px; color: #595959;">
           <span data-custom-className="body_text">
-            Download and use our mobile application (
+            Download and use our mobile application 
             <span className="question">
-              Cure8)
+            (Cure8)
               <span style="font-size: 15px; color: #595959;">
                 <span style="font-size: 15px; color: #595959;">
                   <span data-custom-className="body_text">
@@ -3450,7 +3450,7 @@ const innerHtml = `<div data-custom-className="body">
                                                                       <span style="font-size: 15px; color: #595959;">
                                                                          
                                                                         <span data-custom-className="body_text">
-                                                                          NO
+                                                                          YES
                                                                         </span>
                                                                       </span>
                                                                     </span>

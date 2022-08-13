@@ -1,5 +1,4 @@
-import { Text, Stack, Link, Heading } from "@chakra-ui/react";
-import { Link as RemixLink } from "@remix-run/react";
+import { Text, Stack, Heading } from "@chakra-ui/react";
 
 export default function Media() {
   return (
