@@ -9,7 +9,7 @@ import {
   LiveReload,
 } from "@remix-run/react";
 import { withEmotionCache } from "@emotion/react";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider } from "@chakra-ui/react";
 
 import Footer from "./components/Footer";
 import theme from "./utils/chakraTheme";
@@ -70,8 +70,6 @@ const Document = withEmotionCache(
           <ScrollRestoration />
           <Scripts />
           {process.env.NODE_ENV !== "development" ? <LiveReload /> : null}
-
-          <Footer />
         </body>
       </html>
     );
@@ -82,7 +80,10 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider {...{ theme }}>
-        <Outlet />
+        <Box bgColor="gray.800" height="100%" overflowY="auto">
+          <Outlet />
+          <Footer />
+        </Box>
       </ChakraProvider>
     </Document>
   );

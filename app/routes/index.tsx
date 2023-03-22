@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   Button,
+  HStack,
 } from "@chakra-ui/react";
 
 import { signOut, getUserSession } from "~/utils/session.server";
@@ -43,27 +44,69 @@ export default function Index() {
         spacing={{ base: 8, md: 10 }}
         py={{ base: 40, md: 28 }}
       >
+        <div>
+          <Text color="#fff" fontSize="6xl" fontWeight="extrabold">
+            Love{" "}
+            <Text
+              as="span"
+              bgGradient="linear(to-r, brand.200, brand.800)"
+              bgClip="text"
+              fontSize="6xl"
+              fontWeight="extrabold"
+            >
+              newsletters
+            </Text>{" "}
+            but
+          </Text>
+          <Text color="#fff" fontSize="6xl" fontWeight="extrabold">
+            hate a{" "}
+            <Text
+              as="span"
+              bgClip="text"
+              bgGradient="linear(to-r, brand.200, brand.800)"
+              fontWeight="extrabold"
+              fontSize="6xl"
+            >
+              cluttered inbox
+            </Text>
+            ?
+          </Text>
+        </div>
+        <Text color="#fff" fontSize="6xl" fontWeight="extrabold">
+          Meet{" "}
+          <Text
+            as="span"
+            bgClip="text"
+            bgGradient="linear(to-r, brand.200, brand.800)"
+            fontSize="6xl"
+            fontWeight="extrabold"
+          >
+            Cure8
+          </Text>
+          .
+        </Text>
+
+        <div>
+          <Text color="gray.100" fontSize="1.3rem">
+            Follow your favourite public lists. Or create your own.
+          </Text>
+          <Text color="gray.100" fontSize="1.3rem">
+            Save articles to read later. Share with friends.
+          </Text>
+        </div>
+
         <Image
           alt="Cure8 Logo"
           borderRadius="2xl"
           src="LogoText@0.25x.png"
-          width="250px"
+          width="150px"
         />
-        <Heading lineHeight={1.1} color="gray.700" size="2xl">
-          Social Content Curation
-        </Heading>
-        <Text>
-          Curate web content for your friends, such as YouTube videos, blog
-          posts and interesting articles. Save links for yourself to view later.
-        </Text>
-        <Text>
-          Cure8 is an app that allows you to save links to anything on the
-          internet for you or your friends to view later. See a video your
-          friend would enjoy? Cure8 it for them! They'll be able to open the app
-          and watch it when they're ready.
+
+        <Text color="gray.100" fontSize="1.5rem" fontWeight="semibold">
+          Coming soon.
         </Text>
 
-        <Button as={RemixLink} colorScheme="brand" to="/help">
+        {/* <Button as={RemixLink} colorScheme="brand" to="/help">
           Learn More
         </Button>
         <Stack
@@ -81,7 +124,7 @@ export default function Index() {
               width="180px"
             />
           </a>
-        </Stack>
+        </Stack> */}
       </Stack>
     </Container>
   );

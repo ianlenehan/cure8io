@@ -34,14 +34,15 @@ const Link: ComponentStyleConfig = {
 
 const Text: ComponentStyleConfig = {
   baseStyle: {
-    color: "rgb(74, 85, 104)",
+    color: "rgb(237, 242, 247)",
     fontFamily: "'OpenSans', sans-serif;",
+    fontSize: "1.2rem",
   },
 };
 
 const Heading: ComponentStyleConfig = {
   baseStyle: {
-    color: "rgb(45, 55, 72)",
+    color: "rgb(237, 242, 247)",
     fontFamily: "'Montserrat', sans-serif;",
   },
 };

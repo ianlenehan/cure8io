@@ -3,7 +3,6 @@ import {
   Box,
   CloseButton,
   Flex,
-  useColorModeValue,
   Link,
   BoxProps,
   Image,
@@ -23,22 +22,14 @@ const LinkItems: Array<LinkItemProps> = [
 ];
 
 interface SidebarProps extends BoxProps {
-  onClose: () => void;
+  onClose?(): void;
 }
 
 export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
   const { pathname } = useLocation();
 
   return (
-    <Box
-      bg={useColorModeValue("white", "gray.900")}
-      borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: 60 }}
-      pos="fixed"
-      h="full"
-      {...rest}
-    >
+    <Box w={{ base: "full", md: 60 }} pos="fixed" h="full" {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Link as={RemixLink} to="/">
           <Image
@@ -59,10 +50,10 @@ export const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
         >
           <Link
             as={RemixLink}
-            fontSize={{ base: "28px", md: "18px" }}
-            color={path === pathname ? "brand.900" : undefined}
+            fontSize="sm"
+            fontWeight="medium"
+            color={path === pathname ? "brand.900" : "gray.300"}
             to={path}
-            variant="dark"
           >
             {name}
           </Link>

@@ -11,12 +11,12 @@ export const links = () => {
 
 function Privacy() {
   return (
-    <LightMode>
+    <Box bgColor="#fff">
       <GlobalStyle />
       <Box maxWidth="600px" margin="0 auto" paddingTop={10}>
         <div dangerouslySetInnerHTML={{ __html: innerHtml }} />
       </Box>
-    </LightMode>
+    </Box>
   );
 }
 

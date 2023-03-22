@@ -4,7 +4,7 @@ import { Link as RemixLink } from "@remix-run/react";
 export default function HelpIndex() {
   return (
     <Stack spacing={10}>
-      <Stack maxWidth="650px" spacing={5}>
+      <Stack spacing={5}>
         <Heading size="lg" marginBottom="12px" textAlign="center">
           Hello!
         </Heading>
@@ -19,7 +19,7 @@ export default function HelpIndex() {
           to report, I'd love to hear from you!
         </Text>
       </Stack>
-      <Stack maxWidth="650px" spacing={5}>
+      <Stack spacing={5}>
         <Heading size="lg" marginBottom="12px" textAlign="center">
           How it works
         </Heading>

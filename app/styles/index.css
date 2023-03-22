@@ -1,3 +1,12 @@
+html,
+body {
+  height: 100%;
+}
+
+/* body {
+  background-color: rgb(26, 32, 44);
+} */
+
 @font-face {
   font-family: "PassionOne";
   font-style: normal;
