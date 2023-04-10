@@ -1,89 +1,92 @@
 // root.tsx
-import React, { useContext, useEffect } from "react";
-import {
-  Outlet,
-  Meta,
-  Links,
-  ScrollRestoration,
-  Scripts,
-  LiveReload,
-} from "@remix-run/react";
-import { withEmotionCache } from "@emotion/react";
-import { Box, ChakraProvider } from "@chakra-ui/react";
+import { useEffect, useState, useRef } from "react";
+import { Outlet, useLoaderData, useRevalidator } from "@remix-run/react";
+import { json, type LoaderArgs } from "@remix-run/node";
+import { ChakraProvider } from "@chakra-ui/react";
+import { type SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/auth-helpers-remix";
 
-import Footer from "./components/Footer";
+import createServerSupabase from "./utils/supabase.server";
 import theme from "./utils/chakraTheme";
-import { ServerStyleContext, ClientStyleContext } from "./utils/context";
+import { Document } from "components/Document";
+import type { Database } from "db_types";
 
 import styles from "~/styles/index.css";
 
-interface DocumentProps {
-  children: React.ReactNode;
-}
+type TypedSupabaseClient = SupabaseClient<Database>;
+
+export type SupabaseOutletContext = { supabase: TypedSupabaseClient };
 
 export const links = () => {
   return [{ rel: "stylesheet", href: styles }];
 };
 
-const Document = withEmotionCache(
-  ({ children }: DocumentProps, emotionCache) => {
-    const serverStyleData = useContext(ServerStyleContext);
-    const clientStyleData = useContext(ClientStyleContext);
+export const loader = async ({ request }: LoaderArgs) => {
+  const env = {
+    SUPABASE_URL: process.env.SUPABASE_URL!,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
+  };
 
-    // Only executed on client
-    useEffect(() => {
-      // re-link sheet container
-      emotionCache.sheet.container = document.head;
-      // re-inject tags
-      const tags = emotionCache.sheet.tags;
-      emotionCache.sheet.flush();
-      tags.forEach((tag) => {
-        (emotionCache.sheet as any)._insertTag(tag);
-      });
-      // reset cache to reapply global styles
-      clientStyleData?.reset();
-    }, []);
+  const response = new Response();
+  const supabase = createServerSupabase({ request, response });
 
-    return (
-      <html lang="en">
-        <head>
-          <meta charSet="utf-8" />
-          <meta name="viewport" content="width=device-width,initial-scale=1" />
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstaticom" />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
-            rel="stylesheet"
-          />
-          <Meta />
-          <Links />
-          {serverStyleData?.map(({ key, ids, css }) => (
-            <style
-              key={key}
-              data-emotion={`${key} ${ids.join(" ")}`}
-              dangerouslySetInnerHTML={{ __html: css }}
-            />
-          ))}
-        </head>
-        <body>
-          {children}
-          <ScrollRestoration />
-          <Scripts />
-          {process.env.NODE_ENV !== "development" ? <LiveReload /> : null}
-        </body>
-      </html>
-    );
-  }
-);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  return json({ env, session }, { headers: response.headers });
+};
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <div>
+      <h1>Error</h1>
+      <p>{error.message}</p>
+      <p>The stack trace is:</p>
+      <pre>{error.stack}</pre>
+    </div>
+  );
+}
 
 export default function App() {
+  const { env, session } = useLoaderData<typeof loader>();
+  const revalidator = useRevalidator();
+  const revalidateRef = useRef(0);
+
+  const [supabase] = useState(() =>
+    createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
+  );
+
+  const serverAccessToken = session?.access_token;
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.access_token === serverAccessToken) {
+        revalidateRef.current = 0;
+        return;
+      }
+
+      if (
+        session?.access_token !== serverAccessToken &&
+        revalidateRef.current < 1
+      ) {
+        // call loaders
+        revalidator.revalidate();
+        revalidateRef.current += 1;
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase, serverAccessToken, revalidator]);
+
   return (
     <Document>
       <ChakraProvider {...{ theme }}>
-        <Box bgColor="gray.800" height="100%" overflowY="auto">
-          <Outlet />
-          <Footer />
-        </Box>
+        <Outlet context={{ supabase }} />
       </ChakraProvider>
     </Document>
   );

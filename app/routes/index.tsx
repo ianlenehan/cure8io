@@ -1,16 +1,9 @@
-import { useLoaderData } from "@remix-run/react";
-import { Link as RemixLink } from "@remix-run/react";
-import {
-  Container,
-  Stack,
-  Heading,
-  Text,
-  Image,
-  Button,
-  HStack,
-} from "@chakra-ui/react";
+import { Container, Stack, Text, Image, Button } from "@chakra-ui/react";
+import { json, type LoaderArgs } from "@remix-run/node";
+import { useLoaderData, useOutletContext } from "@remix-run/react";
 
-import { signOut, getUserSession } from "~/utils/session.server";
+import createServerSupabase from "~/utils/supabase.server";
+import type { SupabaseOutletContext } from "~/root";
 
 // https://remix.run/api/conventions#meta
 export let meta = () => {
@@ -21,23 +14,46 @@ export let meta = () => {
   };
 };
 
-export let action = ({ request }: { request: Request }) => {
-  return signOut(request);
-};
-
-export let loader = async ({ request }: { request: Request }) => {
-  const sessionUser = await getUserSession(request);
-
-  return sessionUser;
+export const loader = async ({ request }: LoaderArgs) => {
+  const response = new Response();
+  const supabase = createServerSupabase({ request, response });
+  const session = await supabase.auth.getSession();
+  console.log("🚀 ~ file: index.tsx:21 ~ loader ~ session:", session);
+  const { data, error } = await supabase.from("test").select();
+  console.log("🚀 ~ file: index.tsx:21 ~ loader ~ error:", error);
+  return json({ test: data || [] }, { headers: response.headers });
 };
 
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
-  const data = useLoaderData();
-  console.log("🚀 ~ file: index.tsx ~ line 28 ~ Index ~ data", data);
+  const data = useLoaderData<typeof loader>();
+  console.log(data);
+
+  const { supabase } = useOutletContext<SupabaseOutletContext>();
+
+  const signIn = async () => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: "123@123.com",
+      password: "password",
+    });
+  };
+
+  const signUp = async () => {
+    const { error } = await supabase.auth.signUp({
+      email: "123@123.com",
+      password: "password",
+    });
+  };
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+  };
 
   return (
     <Container maxW={"5xl"}>
+      <Button onClick={signUp}>Sign Up</Button>
+      <Button onClick={signIn}>Sign In</Button>
+      <Button onClick={signOut}>Sign Out</Button>
       <Stack
         textAlign={"center"}
         align={"center"}
@@ -45,7 +61,7 @@ export default function Index() {
         py={{ base: 40, md: 28 }}
       >
         <div>
-          <Text color="#fff" fontSize="6xl" fontWeight="extrabold">
+          <Text fontSize="6xl" fontWeight="extrabold">
             Love{" "}
             <Text
               as="span"
@@ -58,7 +74,7 @@ export default function Index() {
             </Text>{" "}
             but
           </Text>
-          <Text color="#fff" fontSize="6xl" fontWeight="extrabold">
+          <Text fontSize="6xl" fontWeight="extrabold">
             hate a{" "}
             <Text
               as="span"
@@ -72,7 +88,7 @@ export default function Index() {
             ?
           </Text>
         </div>
-        <Text color="#fff" fontSize="6xl" fontWeight="extrabold">
+        <Text fontSize="6xl" fontWeight="extrabold">
           Meet{" "}
           <Text
             as="span"
@@ -87,10 +103,10 @@ export default function Index() {
         </Text>
 
         <div>
-          <Text color="gray.100" fontSize="1.3rem">
+          <Text fontSize="1.3rem">
             Follow your favourite public lists. Or create your own.
           </Text>
-          <Text color="gray.100" fontSize="1.3rem">
+          <Text fontSize="1.3rem">
             Save articles to read later. Share with friends.
           </Text>
         </div>
@@ -102,41 +118,10 @@ export default function Index() {
           width="150px"
         />
 
-        <Text color="gray.100" fontSize="1.5rem" fontWeight="semibold">
+        <Text fontSize="1.5rem" fontWeight="semibold">
           Coming soon.
         </Text>
-
-        {/* <Button as={RemixLink} colorScheme="brand" to="/help">
-          Learn More
-        </Button>
-        <Stack
-          spacing={{ base: 4, sm: 6 }}
-          direction={{ base: "column", sm: "row" }}
-        >
-          <a
-            href="https://apps.apple.com/au/app/cure8/id1525122380"
-            rel="noreferrer"
-            target="_blank"
-          >
-            <Image
-              alt="App Store Link"
-              src="logo-app-store.png"
-              width="180px"
-            />
-          </a>
-        </Stack> */}
       </Stack>
     </Container>
   );
-  // return (
-  //   <div className="remix__page">
-  //     <main>
-  //       <h2>Welcome to Cure8</h2>
-
-  //       {data && <Form method="post">
-  //         <button type="submit">Sign Out</button>
-  //       </Form>}
-  //     </main>
-  //   </div>
-  // );
 }

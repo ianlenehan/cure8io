@@ -13,6 +13,22 @@ const brandColor = {
   900: "#34a15f",
 };
 
+const styles = {
+  global: {
+    "html, body": {
+      color: "gray.600",
+      fontKerning: "normal",
+      height: "100%",
+      width: "100%",
+      margin: "0",
+      textRendering: "optimizeLegibility",
+    },
+    "*": {
+      WebkitTapHighlightColor: "rgba(0,0,0,0)",
+    },
+  },
+};
+
 const Link: ComponentStyleConfig = {
   variants: {
     dark: {
@@ -34,15 +50,13 @@ const Link: ComponentStyleConfig = {
 
 const Text: ComponentStyleConfig = {
   baseStyle: {
-    color: "rgb(237, 242, 247)",
     fontFamily: "'OpenSans', sans-serif;",
-    fontSize: "1.2rem",
   },
 };
 
 const Heading: ComponentStyleConfig = {
   baseStyle: {
-    color: "rgb(237, 242, 247)",
+    color: "gray.600",
     fontFamily: "'Montserrat', sans-serif;",
   },
 };
@@ -56,6 +70,7 @@ const theme = extendTheme({
     Link,
     Text,
   },
+  styles,
 });
 
 export default theme;

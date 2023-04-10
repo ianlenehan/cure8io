@@ -6,42 +6,61 @@ import {
   FormLabel,
   Input,
   Image,
-  Checkbox,
   Stack,
   Link,
   Button,
   Heading,
   useColorModeValue,
+  Text,
+  HStack,
+  Divider,
 } from "@chakra-ui/react";
-import { Form } from "@remix-run/react";
+import { Form, Link as RouterLink, useOutletContext } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/node";
 
-import { signIn } from "~/utils/db.server";
-import { createUserSession } from "~/utils/session.server";
+import type { SupabaseOutletContext } from "~/root";
+import createServerSupabase from "~/utils/supabase.server";
+import { PasswordInput } from "components/PasswordInput";
 
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+// export const action: ActionFunction = async ({ request }) => {
+//   const formData = await request.formData();
+//   const email = formData.get("email") as string;
+//   const password = formData.get("password") as string;
 
-  if (!(email && password)) {
-    return null;
-  }
+//   if (!(email && password)) {
+//     return null;
+//   }
 
-  const { user } = await signIn(email, password);
-  const token = await user.getIdToken();
-  return createUserSession(token, "/links");
-};
+//   const response = new Response();
+//   const supabase = createServerSupabase({ request, response });
+//   const { data } = await supabase.from("meals").select();
+//   return json({ meals: data || [] }, { headers: response.headers });
+
+//   const { data, error } = await supabase.auth.signUp({
+//     email: 'example@email.com',
+//     password: 'example-password',
+//   })
+
+//   return null;
+
+//   // const { user } = await signIn(email, password);
+//   // const token = await user.getIdToken();
+//   // return createUserSession(token, "/links");
+// };
 
 export default function Login() {
+  const { supabase } = useOutletContext<SupabaseOutletContext>();
+
+  // async function signInWithGoogle() {
+  //   const res = await supabase.auth.signInWithOAuth({
+  //     provider: "google",
+  //   });
+  //   console.log("🚀 ~ file: login.tsx:6 ~ signInWithGoogle ~ error:", res);
+  // }
+
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-    >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+    <Flex bg={useColorModeValue("gray.50", "gray.800")} height="100%">
+      <Stack spacing={8} mx={"auto"} maxW={"lg"} minW="md" py={12} px={6}>
         <Center mb="5">
           <Image
             alt="Cure8 Logo"
@@ -51,7 +70,7 @@ export default function Login() {
           />
         </Center>
         <Stack align={"center"}>
-          <Heading fontSize={"4xl"}>Sign in to your account</Heading>
+          <Heading fontSize={"xl"}>Sign in to your account</Heading>
         </Stack>
         <Box
           rounded={"lg"}
@@ -59,32 +78,52 @@ export default function Login() {
           boxShadow={"lg"}
           p={8}
         >
-          <Stack spacing={4}>
-            <Form method="post">
+          <Form method="post">
+            <Stack spacing={4}>
               <FormControl id="email">
                 <FormLabel>Email address</FormLabel>
                 <Input type="email" name="email" />
               </FormControl>
               <FormControl id="password">
                 <FormLabel>Password</FormLabel>
-                <Input type="password" name="password" />
+                <PasswordInput />
               </FormControl>
-              <Stack spacing={10}>
-                <Stack
-                  direction={{ base: "column", sm: "row" }}
-                  align={"start"}
-                  justify={"space-between"}
-                >
-                  <Checkbox>Remember me</Checkbox>
-                  <Link color={"brand.500"}>Forgot password?</Link>
-                </Stack>
-                <Button colorScheme="brand" type="submit">
-                  Sign in
-                </Button>
-              </Stack>
-            </Form>
-          </Stack>
+            </Stack>
+            <Stack spacing={10}>
+              <Link color={"brand.500"}>Forgot password?</Link>
+
+              <Button colorScheme="brand" type="submit">
+                Sign in
+              </Button>
+
+              <HStack spacing="24px">
+                <Divider />
+                <Text>or</Text>
+                <Divider />
+              </HStack>
+
+              <Button type="submit" variant="outline">
+                <Image
+                  alt="Google logo"
+                  htmlHeight="20px"
+                  htmlWidth="20px"
+                  marginRight="12px"
+                  src="google-logo.svg"
+                />
+                <Text fontFamily="Roboto" fontSize="16px">
+                  Sign in with Google
+                </Text>
+              </Button>
+            </Stack>
+          </Form>
         </Box>
+        <Text align="center">
+          First time here?{" "}
+          <Link as={RouterLink} to="/signup">
+            Create an account
+          </Link>
+          .
+        </Text>
       </Stack>
     </Flex>
   );
