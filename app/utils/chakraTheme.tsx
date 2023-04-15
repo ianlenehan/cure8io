@@ -18,6 +18,7 @@ const styles = {
     "html, body": {
       color: "gray.600",
       fontKerning: "normal",
+      fontFamily: "'Roboto', sans-serif;",
       height: "100%",
       width: "100%",
       margin: "0",
@@ -48,16 +49,16 @@ const Link: ComponentStyleConfig = {
   },
 };
 
-const Text: ComponentStyleConfig = {
+const Heading: ComponentStyleConfig = {
   baseStyle: {
     fontFamily: "'OpenSans', sans-serif;",
+    color: "gray.700",
   },
 };
 
-const Heading: ComponentStyleConfig = {
+const Text: ComponentStyleConfig = {
   baseStyle: {
-    color: "gray.600",
-    fontFamily: "'Montserrat', sans-serif;",
+    fontFamily: "'Roboto', sans-serif;",
   },
 };
 
@@ -66,9 +67,9 @@ const theme = extendTheme({
     brand: brandColor,
   },
   components: {
-    Heading,
     Link,
     Text,
+    Heading,
   },
   styles,
 });

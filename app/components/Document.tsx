@@ -8,7 +8,7 @@ import {
 } from "@remix-run/react";
 import { withEmotionCache } from "@emotion/react";
 
-import { ServerStyleContext, ClientStyleContext } from "../app/utils/context";
+import { ServerStyleContext, ClientStyleContext } from "../utils/context";
 
 type DocumentProps = {
   children: React.ReactNode;
@@ -58,7 +58,8 @@ export const Document = withEmotionCache(
           {children}
           <ScrollRestoration />
           <Scripts />
-          {process.env.NODE_ENV !== "development" ? <LiveReload /> : null}
+          {/* {process.env.NODE_ENV !== "development" ? <LiveReload /> : null} */}
+          <LiveReload />
         </body>
       </html>
     );

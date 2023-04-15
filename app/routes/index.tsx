@@ -1,9 +1,17 @@
-import { Container, Stack, Text, Image, Button } from "@chakra-ui/react";
+import {
+  Container,
+  Stack,
+  Text,
+  Image,
+  Button,
+  Flex,
+  ButtonGroup,
+} from "@chakra-ui/react";
 import { json, type LoaderArgs } from "@remix-run/node";
-import { useLoaderData, useOutletContext } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 import createServerSupabase from "~/utils/supabase.server";
-import type { SupabaseOutletContext } from "~/root";
+import { Link } from "react-router-dom";
 
 // https://remix.run/api/conventions#meta
 export let meta = () => {
@@ -17,43 +25,31 @@ export let meta = () => {
 export const loader = async ({ request }: LoaderArgs) => {
   const response = new Response();
   const supabase = createServerSupabase({ request, response });
-  const session = await supabase.auth.getSession();
-  console.log("🚀 ~ file: index.tsx:21 ~ loader ~ session:", session);
-  const { data, error } = await supabase.from("test").select();
-  console.log("🚀 ~ file: index.tsx:21 ~ loader ~ error:", error);
-  return json({ test: data || [] }, { headers: response.headers });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  return json({ session }, { headers: response.headers });
 };
 
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
-  console.log(data);
-
-  const { supabase } = useOutletContext<SupabaseOutletContext>();
-
-  const signIn = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email: "123@123.com",
-      password: "password",
-    });
-  };
-
-  const signUp = async () => {
-    const { error } = await supabase.auth.signUp({
-      email: "123@123.com",
-      password: "password",
-    });
-  };
-
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-  };
+  const { session } = useLoaderData<typeof loader>();
 
   return (
     <Container maxW={"5xl"}>
-      <Button onClick={signUp}>Sign Up</Button>
-      <Button onClick={signIn}>Sign In</Button>
-      <Button onClick={signOut}>Sign Out</Button>
+      <Flex justifyContent={"flex-end"} mt={4}>
+        {session ? null : (
+          <ButtonGroup>
+            <Button as={Link} to="login" size="sm" variant="ghost">
+              Sign In
+            </Button>
+            <Button as={Link} colorScheme="brand" to="signup" size="sm">
+              Sign Up
+            </Button>
+          </ButtonGroup>
+        )}
+      </Flex>
       <Stack
         textAlign={"center"}
         align={"center"}

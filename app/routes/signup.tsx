@@ -15,17 +15,20 @@ import {
   Text,
   HStack,
   Divider,
+  useBoolean,
 } from "@chakra-ui/react";
-import { Link as RouterLink, useOutletContext } from "@remix-run/react";
-import type { ActionFunction } from "@remix-run/node";
+import {
+  Link as RouterLink,
+  useOutletContext,
+  useNavigation,
+} from "@remix-run/react";
+import { json, redirect, type LoaderArgs } from "@remix-run/node";
 import z from "zod";
-import type { ZodError } from "zod";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 
 import type { SupabaseOutletContext } from "~/root";
-import { PasswordInput } from "components/PasswordInput";
-import { signIn } from "~/utils/db.server";
-import { createUserSession } from "~/utils/session.server";
+import createServerSupabase from "~/utils/supabase.server";
+import { PasswordInput } from "~/components/PasswordInput";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -37,41 +40,68 @@ const schema = z.object({
 
 type FormattedErrors = z.inferFormattedError<typeof schema>;
 
+export const loader = async ({ request }: LoaderArgs) => {
+  const response = new Response();
+  const supabase = createServerSupabase({ request, response });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session) {
+    return redirect("/feed");
+  }
+
+  return json({});
+};
+
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-
   const [errors, setErrors] = useState<FormattedErrors>();
-  console.log("🚀 ~ file: signup.tsx:73 ~ Signup ~ errors:", errors);
+
+  const [processing, setProcessing] = useBoolean();
+
+  const navigation = useNavigation();
+  const isLoading = processing || navigation.state !== "idle";
 
   const { supabase } = useOutletContext<SupabaseOutletContext>();
 
   async function signInWithGoogle() {
-    const res = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: "http://localhost:3000/feed",
+      },
     });
-    console.log("🚀 ~ file: login.tsx:6 ~ signInWithGoogle ~ error:", res);
+
+    if (error) {
+      throw error;
+    }
   }
 
   const signUp = async () => {
+    setProcessing.on();
     setErrors(undefined);
-    console.log({ email, password, name });
+
     try {
-      console.log("result 1");
       const result = schema.safeParse({ email, password, name });
       if (!result.success) {
-        console.log("result?");
         setErrors(result.error.format());
         return;
       }
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
       });
 
       if (error) {
-        throw Error;
+        throw error;
       }
     } catch (err) {
       console.error(err);
@@ -143,7 +173,12 @@ export default function Signup() {
               </FormControl>
             </Stack>
 
-            <Button colorScheme="brand" onClick={signUp} type="button">
+            <Button
+              colorScheme="brand"
+              onClick={signUp}
+              type="button"
+              {...{ isLoading }}
+            >
               Create account
             </Button>
 
@@ -153,7 +188,11 @@ export default function Signup() {
               <Divider />
             </HStack>
 
-            <Button variant="outline" onClick={signInWithGoogle}>
+            <Button
+              variant="outline"
+              onClick={signInWithGoogle}
+              {...{ isLoading }}
+            >
               <Image
                 alt="Google logo"
                 htmlHeight="20px"

@@ -4,6 +4,7 @@ import {
   Box,
   FormControl,
   FormLabel,
+  FormErrorMessage,
   Input,
   Image,
   Stack,
@@ -14,49 +15,94 @@ import {
   Text,
   HStack,
   Divider,
+  useBoolean,
 } from "@chakra-ui/react";
-import { Form, Link as RouterLink, useOutletContext } from "@remix-run/react";
-import type { ActionFunction } from "@remix-run/node";
+import {
+  Link as RouterLink,
+  useOutletContext,
+  useNavigation,
+} from "@remix-run/react";
+import { json, redirect, type LoaderArgs } from "@remix-run/node";
+import { useState } from "react";
+import z from "zod";
 
 import type { SupabaseOutletContext } from "~/root";
 import createServerSupabase from "~/utils/supabase.server";
-import { PasswordInput } from "components/PasswordInput";
+import { PasswordInput } from "~/components/PasswordInput";
 
-// export const action: ActionFunction = async ({ request }) => {
-//   const formData = await request.formData();
-//   const email = formData.get("email") as string;
-//   const password = formData.get("password") as string;
+export const loader = async ({ request }: LoaderArgs) => {
+  const response = new Response();
+  const supabase = createServerSupabase({ request, response });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-//   if (!(email && password)) {
-//     return null;
-//   }
+  if (session) {
+    return redirect("/feed");
+  }
 
-//   const response = new Response();
-//   const supabase = createServerSupabase({ request, response });
-//   const { data } = await supabase.from("meals").select();
-//   return json({ meals: data || [] }, { headers: response.headers });
+  return json({});
+};
 
-//   const { data, error } = await supabase.auth.signUp({
-//     email: 'example@email.com',
-//     password: 'example-password',
-//   })
+const schema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
 
-//   return null;
-
-//   // const { user } = await signIn(email, password);
-//   // const token = await user.getIdToken();
-//   // return createUserSession(token, "/links");
-// };
+type FormattedErrors = z.inferFormattedError<typeof schema>;
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<FormattedErrors>();
+
+  const [processing, setProcessing] = useBoolean();
+
+  const navigation = useNavigation();
+  const isLoading = processing || navigation.state !== "idle";
+
   const { supabase } = useOutletContext<SupabaseOutletContext>();
 
-  // async function signInWithGoogle() {
-  //   const res = await supabase.auth.signInWithOAuth({
-  //     provider: "google",
-  //   });
-  //   console.log("🚀 ~ file: login.tsx:6 ~ signInWithGoogle ~ error:", res);
-  // }
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:3000/feed",
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+  };
+
+  const signIn = async () => {
+    setProcessing.on();
+
+    try {
+      const result = schema.safeParse({ email, password });
+      if (!result.success) {
+        setErrors(result.error.format());
+        return;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    switch (name) {
+      case "email":
+        setEmail(value);
+        break;
+      case "password":
+        setPassword(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <Flex bg={useColorModeValue("gray.50", "gray.800")} height="100%">
@@ -78,7 +124,62 @@ export default function Login() {
           boxShadow={"lg"}
           p={8}
         >
-          <Form method="post">
+          <Stack spacing={8}>
+            <Stack spacing={4}>
+              <FormControl id="email" isInvalid={!!errors?.email}>
+                <FormLabel>Email address</FormLabel>
+                <Input
+                  type="email"
+                  name="email"
+                  value={email}
+                  onChange={handleChange}
+                />
+                <FormErrorMessage>{errors?.email?._errors}</FormErrorMessage>
+              </FormControl>
+              <FormControl id="password" isInvalid={!!errors?.password}>
+                <FormLabel>Password</FormLabel>
+                <PasswordInput
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                />
+                <FormErrorMessage>{errors?.password?._errors}</FormErrorMessage>
+              </FormControl>
+            </Stack>
+
+            <Button
+              colorScheme="brand"
+              onClick={signIn}
+              type="button"
+              {...{ isLoading }}
+            >
+              Sign in
+            </Button>
+
+            <HStack spacing="24px">
+              <Divider />
+              <Text>or</Text>
+              <Divider />
+            </HStack>
+
+            <Button
+              variant="outline"
+              onClick={signInWithGoogle}
+              {...{ isLoading }}
+            >
+              <Image
+                alt="Google logo"
+                htmlHeight="20px"
+                htmlWidth="20px"
+                marginRight="12px"
+                src="google-logo.svg"
+              />
+              <Text fontFamily="Roboto" fontSize="16px">
+                Sign in with Google
+              </Text>
+            </Button>
+          </Stack>
+          {/* <Form method="post">
             <Stack spacing={4}>
               <FormControl id="email">
                 <FormLabel>Email address</FormLabel>
@@ -110,12 +211,16 @@ export default function Login() {
                   marginRight="12px"
                   src="google-logo.svg"
                 />
-                <Text fontFamily="Roboto" fontSize="16px">
+                <Text
+                  fontFamily="Roboto"
+                  fontSize="16px"
+                  onClick={signInWithGoogle}
+                >
                   Sign in with Google
                 </Text>
               </Button>
             </Stack>
-          </Form>
+          </Form> */}
         </Box>
         <Text align="center">
           First time here?{" "}

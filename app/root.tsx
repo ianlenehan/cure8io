@@ -8,7 +8,8 @@ import { createBrowserClient } from "@supabase/auth-helpers-remix";
 
 import createServerSupabase from "./utils/supabase.server";
 import theme from "./utils/chakraTheme";
-import { Document } from "components/Document";
+import { Document } from "~/components/Document";
+import { SideNav } from "~/components/SideNav";
 import type { Database } from "db_types";
 
 import styles from "~/styles/index.css";
@@ -38,6 +39,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
+  console.log("🚀 ~ file: root.tsx:42 ~ ErrorBoundary ~ error:", error);
   return (
     <div>
       <h1>Error</h1>
@@ -86,7 +88,9 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider {...{ theme }}>
-        <Outlet context={{ supabase }} />
+        <SideNav>
+          <Outlet context={{ supabase }} />
+        </SideNav>
       </ChakraProvider>
     </Document>
   );
