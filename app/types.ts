@@ -1,3 +1,5 @@
+import type { Database } from "db_types";
+
 export type Curation = {
   comment: string;
   curatorId: string;
@@ -24,3 +26,11 @@ export type Link = {
   url: string;
   id: string;
 };
+
+export type List = Database["public"]["Tables"]["lists"]["Row"];
+
+export type ListTag = Database["public"]["Tables"]["tags"]["Row"];
+
+export type Batch = Database["public"]["Tables"]["batches"]["Row"];
+
+export type Post = Database["public"]["Tables"]["posts"]["Row"];

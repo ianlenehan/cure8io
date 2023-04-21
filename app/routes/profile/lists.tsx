@@ -15,14 +15,11 @@ import z from "zod";
 import {
   Button,
   Box,
-  Divider,
   Card,
   CardBody,
   Text,
   HStack,
   Stack,
-  Heading,
-  Flex,
   Icon,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
@@ -31,6 +28,7 @@ import { profanity } from "@2toad/profanity";
 
 import { CreateListModal } from "~/components/CreateListModal";
 import { ZeroState } from "~/components/ZeroState";
+import { PageHeader } from "~/components/PageHeader";
 import createServerSupabase from "~/utils/supabase.server";
 
 const newListSchema = z.object({
@@ -148,6 +146,7 @@ export default function Lists() {
       leftIcon={<Icon as={FiPlus} />}
       onClick={handleCreate}
       size="md"
+      variant="outline"
     >
       Create list
     </Button>
@@ -155,16 +154,10 @@ export default function Lists() {
 
   return (
     <Box height="100%">
-      <Flex justifyContent="space-between">
-        <Heading size="lg" marginBottom="3">
-          Lists
-        </Heading>
-        {createButton}
-      </Flex>
+      <Stack spacing="6">
+        <PageHeader title="Lists">{createButton}</PageHeader>
 
-      {lists.length ? (
-        <Stack spacing="6">
-          <Divider />
+        {lists.length ? (
           <HStack alignItems="flex-start">
             <Box maxHeight="100%" overflowY="auto" width="300px">
               <Card overflow="hidden" variant="outline">
@@ -197,16 +190,16 @@ export default function Lists() {
                 ))}
               </Card>
             </Box>
-            <Box maxWidth="1200px" width="100%">
+            <Box maxWidth="800px" width="100%">
               <Outlet />
             </Box>
           </HStack>
-        </Stack>
-      ) : (
-        <ZeroState>
-          <Box marginTop="24px">{createButton}</Box>
-        </ZeroState>
-      )}
+        ) : (
+          <ZeroState>
+            <Box marginTop="24px">{createButton}</Box>
+          </ZeroState>
+        )}
+      </Stack>
       <CreateListModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </Box>
   );

@@ -9,6 +9,23 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      batches: {
+        Row: {
+          date: string
+          id: string
+          list_id: string
+        }
+        Insert: {
+          date?: string
+          id?: string
+          list_id: string
+        }
+        Update: {
+          date?: string
+          id?: string
+          list_id?: string
+        }
+      }
       lists: {
         Row: {
           created_at: string
@@ -50,6 +67,38 @@ export interface Database {
           id?: string
           list_id?: string
           tag_id?: string
+        }
+      }
+      posts: {
+        Row: {
+          author: string | null
+          created_at: string
+          description: string | null
+          id: string
+          list_id: string
+          publish_date: string
+          title: string | null
+          url: string
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          list_id: string
+          publish_date?: string
+          title?: string | null
+          url: string
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          list_id?: string
+          publish_date?: string
+          title?: string | null
+          url?: string
         }
       }
       profiles: {

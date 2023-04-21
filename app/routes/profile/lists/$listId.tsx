@@ -1,13 +1,11 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Outlet, Link as RouterLink } from "@remix-run/react";
 import {
   Card,
   CardBody,
   Heading,
   Button,
-  Text,
-  Tag,
   HStack,
   Stack,
   Flex,
@@ -28,30 +26,13 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     return redirect("/login");
   }
 
-  // const { data, error } = await supabase
-  //   .from("lists")
-  //   .select(
-  //     `
-  //   *,
-  //   tags (*)
-  // `
-  //   )
-  //   .eq("id", params.listId)
-  //   .single();
-
   const { data, error } = await supabase
     .from("lists")
-    .select(
-      `*,
-    tags (
-      *
-    )`
-    )
+    .select(`*, tags (*), posts (*)`)
     .eq("id", params.listId)
     .single();
 
   if (error) {
-    console.log("🚀 ~ file: $listId.tsx:31 ~ loader ~ error:", error);
     throw new Error(error.message);
   }
 
@@ -60,10 +41,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
 export default function List() {
   const { list } = useLoaderData<typeof loader>();
-  console.log("🚀 ~ file: $listId.tsx:34 ~ List ~ list:", list);
-
-  const { tags } = list;
-  const hasTags = Array.isArray(tags) && tags.length > 0;
 
   return (
     <Card variant="outline" width="100%">
@@ -79,18 +56,17 @@ export default function List() {
               )}
             </HStack>
 
-            <Button size="sm" leftIcon={<FiPlus />} variant="outline">
+            <Button
+              as={RouterLink}
+              size="sm"
+              leftIcon={<FiPlus />}
+              variant="outline"
+              to="new"
+            >
               Add post
             </Button>
           </Flex>
-          <Text color="gray.500">{list.description}</Text>
-          {hasTags && (
-            <HStack>
-              {tags.map(({ id, name }) => (
-                <Tag key={id}>{name}</Tag>
-              ))}
-            </HStack>
-          )}
+          <Outlet />
         </Stack>
       </CardBody>
     </Card>

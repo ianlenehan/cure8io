@@ -29,6 +29,8 @@
     "firebase-admin": "^10.0.2",
     "framer-motion": "^6.2.8",
     "react": "^18.2.0",
+    "react-datetime-picker": "^5.0.3",
+    "react-day-picker": "^8.7.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
     "react-icons": "^4.8.0",

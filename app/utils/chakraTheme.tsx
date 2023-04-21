@@ -18,7 +18,6 @@ const styles = {
     "html, body": {
       color: "gray.600",
       fontKerning: "normal",
-      fontFamily: "'Roboto', sans-serif;",
       height: "100%",
       width: "100%",
       margin: "0",
