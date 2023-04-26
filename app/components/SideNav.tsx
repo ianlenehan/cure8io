@@ -12,7 +12,7 @@ import {
   DrawerContent,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiHome, FiLayers, FiMenu } from "react-icons/fi";
+import { FiHome, FiLayers, FiMenu, FiCompass } from "react-icons/fi";
 import type { IconType } from "react-icons";
 import { useMatches, Link as RouterLink } from "@remix-run/react";
 
@@ -21,11 +21,12 @@ import { Logo } from "./Logo";
 type LinkItemProps = {
   name: string;
   icon: IconType;
-  to: "feed" | "profile/lists";
+  to: "feed" | "profile/lists" | "discover";
 };
 
 const LinkItems: Array<LinkItemProps> = [
   { name: "Feed", icon: FiHome, to: "feed" },
+  { name: "Discover", icon: FiCompass, to: "discover" },
   { name: "My lists", icon: FiLayers, to: "profile/lists" },
 ];
 

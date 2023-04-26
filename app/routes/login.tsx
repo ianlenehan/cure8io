@@ -16,143 +16,110 @@ import {
   HStack,
   Divider,
   useBoolean,
-} from "@chakra-ui/react";
-import {
-  Link as RouterLink,
-  useOutletContext,
-  useNavigation,
-} from "@remix-run/react";
-import { json, redirect, type LoaderArgs } from "@remix-run/node";
-import { useState } from "react";
-import z from "zod";
+} from '@chakra-ui/react'
+import { Link as RouterLink, useOutletContext, useNavigation } from '@remix-run/react'
+import { json, redirect, type LoaderArgs } from '@remix-run/node'
+import { useState } from 'react'
+import z from 'zod'
 
-import type { SupabaseOutletContext } from "~/root";
-import createServerSupabase from "~/utils/supabase.server";
-import { PasswordInput } from "~/components/PasswordInput";
+import type { SupabaseOutletContext } from '~/root'
+import { getSupabaseSession } from '~/api/auth.server'
+import { PasswordInput } from '~/components/PasswordInput'
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const response = new Response();
-  const supabase = createServerSupabase({ request, response });
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+  const { session } = await getSupabaseSession(request)
   if (session) {
-    return redirect("/feed");
+    return redirect('/feed')
   }
 
-  return json({});
-};
+  return json({})
+}
 
 const schema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(1, { message: "Password is required" }),
-});
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string().min(1, { message: 'Password is required' }),
+})
 
-type FormattedErrors = z.inferFormattedError<typeof schema>;
+type FormattedErrors = z.inferFormattedError<typeof schema>
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<FormattedErrors>();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<FormattedErrors>()
 
-  const [processing, setProcessing] = useBoolean();
+  const [processing, setProcessing] = useBoolean()
 
-  const navigation = useNavigation();
-  const isLoading = processing || navigation.state !== "idle";
+  const navigation = useNavigation()
+  const isLoading = processing || navigation.state !== 'idle'
 
-  const { supabase } = useOutletContext<SupabaseOutletContext>();
+  const { supabase } = useOutletContext<SupabaseOutletContext>()
 
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider: 'google',
       options: {
-        redirectTo: "http://localhost:3000/feed",
+        redirectTo: 'http://localhost:3000/feed',
       },
-    });
+    })
 
     if (error) {
-      throw error;
+      throw new Error(error.message)
     }
-  };
+  }
 
   const signIn = async () => {
-    setProcessing.on();
+    setProcessing.on()
 
     try {
-      const result = schema.safeParse({ email, password });
+      const result = schema.safeParse({ email, password })
       if (!result.success) {
-        setErrors(result.error.format());
-        return;
+        setErrors(result.error.format())
+        return
       }
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     switch (name) {
-      case "email":
-        setEmail(value);
-        break;
-      case "password":
-        setPassword(value);
-        break;
+      case 'email':
+        setEmail(value)
+        break
+      case 'password':
+        setPassword(value)
+        break
       default:
-        break;
+        break
     }
-  };
+  }
 
   return (
-    <Flex bg={useColorModeValue("gray.50", "gray.800")} height="100%">
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} minW="md" py={12} px={6}>
+    <Flex bg={useColorModeValue('gray.50', 'gray.800')} height="100%">
+      <Stack spacing={8} mx={'auto'} maxW={'lg'} minW="md" py={12} px={6}>
         <Center mb="5">
-          <Image
-            alt="Cure8 Logo"
-            borderRadius="2xl"
-            src="LogoText@0.25x.png"
-            width="250px"
-          />
+          <Image alt="Cure8 Logo" borderRadius="2xl" src="LogoText@0.25x.png" width="250px" />
         </Center>
-        <Stack align={"center"}>
-          <Heading fontSize={"xl"}>Sign in to your account</Heading>
+        <Stack align={'center'}>
+          <Heading fontSize={'xl'}>Sign in to your account</Heading>
         </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
+        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8}>
           <Stack spacing={8}>
             <Stack spacing={4}>
               <FormControl id="email" isInvalid={!!errors?.email}>
                 <FormLabel>Email address</FormLabel>
-                <Input
-                  type="email"
-                  name="email"
-                  value={email}
-                  onChange={handleChange}
-                />
+                <Input type="email" name="email" value={email} onChange={handleChange} />
                 <FormErrorMessage>{errors?.email?._errors}</FormErrorMessage>
               </FormControl>
               <FormControl id="password" isInvalid={!!errors?.password}>
                 <FormLabel>Password</FormLabel>
-                <PasswordInput
-                  name="password"
-                  value={password}
-                  onChange={handleChange}
-                />
+                <PasswordInput name="password" value={password} onChange={handleChange} />
                 <FormErrorMessage>{errors?.password?._errors}</FormErrorMessage>
               </FormControl>
             </Stack>
 
-            <Button
-              colorScheme="brand"
-              onClick={signIn}
-              type="button"
-              {...{ isLoading }}
-            >
+            <Button colorScheme="brand" onClick={signIn} type="button" {...{ isLoading }}>
               Sign in
             </Button>
 
@@ -162,18 +129,8 @@ export default function Login() {
               <Divider />
             </HStack>
 
-            <Button
-              variant="outline"
-              onClick={signInWithGoogle}
-              {...{ isLoading }}
-            >
-              <Image
-                alt="Google logo"
-                htmlHeight="20px"
-                htmlWidth="20px"
-                marginRight="12px"
-                src="google-logo.svg"
-              />
+            <Button variant="outline" onClick={signInWithGoogle} {...{ isLoading }}>
+              <Image alt="Google logo" htmlHeight="20px" htmlWidth="20px" marginRight="12px" src="google-logo.svg" />
               <Text fontFamily="Roboto" fontSize="16px">
                 Sign in with Google
               </Text>
@@ -223,7 +180,7 @@ export default function Login() {
           </Form> */}
         </Box>
         <Text align="center">
-          First time here?{" "}
+          First time here?{' '}
           <Link as={RouterLink} to="/signup">
             Create an account
           </Link>
@@ -231,5 +188,5 @@ export default function Login() {
         </Text>
       </Stack>
     </Flex>
-  );
+  )
 }

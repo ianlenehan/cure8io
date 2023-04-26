@@ -6,7 +6,7 @@ type Props = {
 };
 
 export const PageHeader = ({ title, children }: Props) => (
-  <Stack spacing="2">
+  <Stack spacing="2" marginBottom="6">
     <Flex justifyContent="space-between">
       <Heading size="lg" marginBottom="3">
         {title}

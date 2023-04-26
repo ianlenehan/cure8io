@@ -26,6 +26,52 @@ export interface Database {
           list_id?: string
         }
       }
+      interactions: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          list_id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          list_id: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          list_id?: string
+          post_id?: string
+          user_id?: string
+        }
+      }
+      likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+      }
       lists: {
         Row: {
           created_at: string
@@ -77,7 +123,7 @@ export interface Database {
           id: string
           list_id: string
           publish_date: string
-          title: string | null
+          title: string
           url: string
         }
         Insert: {
@@ -87,7 +133,7 @@ export interface Database {
           id?: string
           list_id: string
           publish_date?: string
-          title?: string | null
+          title: string
           url: string
         }
         Update: {
@@ -97,7 +143,7 @@ export interface Database {
           id?: string
           list_id?: string
           publish_date?: string
-          title?: string | null
+          title?: string
           url?: string
         }
       }
@@ -113,6 +159,26 @@ export interface Database {
         Update: {
           created_at?: string | null
           id?: string
+        }
+      }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          id: string
+          list_id: string
+          subscriber_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          list_id: string
+          subscriber_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          list_id?: string
+          subscriber_id?: string
         }
       }
       tags: {

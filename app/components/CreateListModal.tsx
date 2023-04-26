@@ -15,92 +15,81 @@ import {
   Stack,
   Textarea,
   useBoolean,
-} from "@chakra-ui/react";
-import { Form, useActionData, useOutletContext } from "@remix-run/react";
-import ReactSelect from "react-select/creatable";
-import type { MultiValue } from "react-select";
-import { useState } from "react";
-import { profanity } from "@2toad/profanity";
+} from '@chakra-ui/react'
+import { Form, useActionData, useOutletContext } from '@remix-run/react'
+import ReactSelect from 'react-select/creatable'
+import type { MultiValue } from 'react-select'
+import { useState } from 'react'
+import { profanity } from '@2toad/profanity'
 
-import type { action } from "~/routes/profile/lists";
-import type { SupabaseOutletContext } from "~/root";
+import type { action } from '~/routes/profile/lists'
+import type { SupabaseOutletContext } from '~/root'
 
 type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
+  isOpen: boolean
+  onClose: () => void
+}
 
 export const CreateListModal = ({ isOpen, onClose }: Props) => {
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<typeof action>()
 
-  const [isLoading, setLoading] = useBoolean();
-  const [tagOptions, setTagOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
-  const [selectedTags, setSelectedTags] = useState<
-    MultiValue<{ label: string; value: string }>
-  >([]);
+  const [isLoading, setLoading] = useBoolean()
+  const [tagOptions, setTagOptions] = useState<{ label: string; value: string }[]>([])
+  const [selectedTags, setSelectedTags] = useState<MultiValue<{ label: string; value: string }>>([])
 
-  const { supabase } = useOutletContext<SupabaseOutletContext>();
+  const { supabase } = useOutletContext<SupabaseOutletContext>()
 
-  const errors =
-    actionData && "errors" in actionData ? actionData.errors : undefined;
-  const profanityErrors =
-    actionData && "profanityErrors" in actionData
-      ? actionData.profanityErrors
-      : undefined;
+  const errors = actionData && 'errors' in actionData ? actionData.errors : undefined
+  const profanityErrors = actionData && 'profanityErrors' in actionData ? actionData.profanityErrors : undefined
 
   const getTags = async (searchValue: string) => {
-    setLoading.on();
-    const { data, error } = await supabase
-      .from("tags")
-      .select("*")
-      .filter("name", "ilike", `%${searchValue}%`);
+    setLoading.on()
+    const { data, error } = await supabase.from('tags').select('*').filter('name', 'ilike', `%${searchValue}%`)
 
-    setLoading.off();
+    setLoading.off()
 
     if (error) {
-      throw error;
+      throw new Error(error.message)
     }
 
-    setTagOptions(data.map((tag) => ({ value: tag.id, label: tag.name })));
-  };
+    setTagOptions(data.map((tag) => ({ value: tag.id, label: tag.name })))
+  }
 
   const handleCreateTag = async (inputValue: string) => {
     if (profanity.exists(inputValue)) {
-      console.error("Profanity is not allowed");
-      return;
+      console.error('Profanity is not allowed')
+      return
     }
 
     if (inputValue.length < 3) {
-      console.error("Tag must be at least 3 characters");
-      return;
+      console.error('Tag must be at least 3 characters')
+      return
     }
 
-    setLoading.on();
+    setLoading.on()
     const { data, error } = await supabase
-      .from("tags")
+      .from('tags')
       .insert({ name: inputValue.trim().toLowerCase() })
       .select()
-      .single();
+      .single()
 
-    setLoading.off();
+    setLoading.off()
     if (error) {
-      throw error.message;
+      throw new Error(error.message)
     }
 
     if (data) {
-      setSelectedTags([...selectedTags, { value: data.id, label: data.name }]);
+      setSelectedTags([...selectedTags, { value: data.id, label: data.name }])
     }
-  };
+  }
 
   const loadTags = (inputValue: string) => {
-    if (inputValue.length < 3) return;
+    if (inputValue.length < 3) return
 
     setTimeout(() => {
-      getTags(inputValue);
-    }, 300);
-  };
+      getTags(inputValue)
+    }, 300)
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -111,15 +100,10 @@ export const CreateListModal = ({ isOpen, onClose }: Props) => {
           <ModalCloseButton />
           <ModalBody>
             <Stack spacing="18px">
-              <FormControl
-                id="name"
-                isInvalid={!!errors?.name || !!profanityErrors?.name}
-              >
+              <FormControl id="name" isInvalid={!!errors?.name || !!profanityErrors?.name}>
                 <FormLabel>List name</FormLabel>
                 <Input name="name" />
-                <FormErrorMessage>
-                  {errors?.name?._errors || profanityErrors?.name}
-                </FormErrorMessage>
+                <FormErrorMessage>{errors?.name?._errors || profanityErrors?.name}</FormErrorMessage>
               </FormControl>
               <FormControl id="visibility" isInvalid={!!errors?.visibility}>
                 <FormLabel>Visibility</FormLabel>
@@ -127,18 +111,12 @@ export const CreateListModal = ({ isOpen, onClose }: Props) => {
                   <option value="public">Public</option>
                   <option value="private">Private</option>
                 </Select>
-                <FormErrorMessage>
-                  {errors?.visibility?._errors}
-                </FormErrorMessage>
+                <FormErrorMessage>{errors?.visibility?._errors}</FormErrorMessage>
               </FormControl>
 
               <FormControl id="tags">
                 <FormLabel>Tags</FormLabel>
-                <Input
-                  type="hidden"
-                  name="tags"
-                  value={selectedTags.map((t) => t.value).join(",")}
-                />
+                <Input type="hidden" name="tags" value={selectedTags.map((t) => t.value).join(',')} />
                 <ReactSelect
                   onInputChange={loadTags}
                   options={tagOptions}
@@ -154,9 +132,7 @@ export const CreateListModal = ({ isOpen, onClose }: Props) => {
               <FormControl id="description" isInvalid={!!errors?.description}>
                 <FormLabel>Description</FormLabel>
                 <Textarea name="description" />
-                <FormErrorMessage>
-                  {errors?.visibility?._errors}
-                </FormErrorMessage>
+                <FormErrorMessage>{errors?.visibility?._errors}</FormErrorMessage>
               </FormControl>
             </Stack>
           </ModalBody>
@@ -169,5 +145,5 @@ export const CreateListModal = ({ isOpen, onClose }: Props) => {
         </Form>
       </ModalContent>
     </Modal>
-  );
-};
+  )
+}
