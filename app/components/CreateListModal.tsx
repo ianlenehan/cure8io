@@ -22,7 +22,7 @@ import type { MultiValue } from 'react-select'
 import { useState } from 'react'
 import { profanity } from '@2toad/profanity'
 
-import type { action } from '~/routes/profile/lists'
+import type { action } from '~/routes/lists'
 import type { SupabaseOutletContext } from '~/root'
 
 type Props = {
@@ -95,7 +95,7 @@ export const CreateListModal = ({ isOpen, onClose }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <Form method="post" action="/profile/lists?create_list=true">
+        <Form method="post" action="/lists?create_list=true">
           <ModalHeader>Create new list</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

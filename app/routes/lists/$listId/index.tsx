@@ -64,7 +64,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 }
 
 export default function ListIndex() {
-  const { list, interactions } = useRouteLoaderData('routes/profile/lists/$listId') as {
+  const { list, interactions } = useRouteLoaderData('routes/lists/$listId') as {
     list: ListType & { tags: ListTag[]; posts: PostType[] }
     interactions: Interaction[]
   }

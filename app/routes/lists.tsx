@@ -75,7 +75,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   if (tagsError) console.error(tagsError)
 
-  return redirect(`/profile/lists/${data.id}`)
+  return redirect(`/lists/${data.id}`)
 }
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -100,7 +100,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const isNewListPath = request.url.endsWith('/new')
 
   if (!params.listId && forLaterList && !isNewListPath) {
-    return redirect(`/profile/lists/${forLaterList.id}`)
+    return redirect(`/lists/${forLaterList.id}`)
   }
 
   return json({ lists }, { headers: response.headers })

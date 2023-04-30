@@ -21,13 +21,13 @@ import { Logo } from './Logo'
 type LinkItemProps = {
   name: string
   icon: IconType
-  to: 'feed' | 'profile/lists' | 'discover'
+  to: 'feed' | 'lists' | 'discover'
 }
 
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Feed', icon: FiHome, to: 'feed' },
   { name: 'Discover', icon: FiCompass, to: 'discover' },
-  { name: 'My lists', icon: FiLayers, to: 'profile/lists' },
+  { name: 'My lists', icon: FiLayers, to: 'lists' },
 ]
 
 type NavItemProps = FlexProps & {

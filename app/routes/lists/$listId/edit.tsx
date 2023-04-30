@@ -16,7 +16,7 @@ export const action = async ({ params, request }: ActionArgs) => {
 }
 
 export default function EditList() {
-  const { list } = useRouteLoaderData('routes/profile/lists/$listId') as {
+  const { list } = useRouteLoaderData('routes/lists/$listId') as {
     list: List & { tags: ListTag[] }
   }
 

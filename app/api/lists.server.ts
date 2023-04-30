@@ -82,7 +82,7 @@ export const createList = async (request: Request) => {
 
   if (tagsError) console.error(tagsError)
 
-  return redirect(`/profile/lists/${data.id}`)
+  return redirect(`/lists/${data.id}`)
 }
 
 export const updateList = async (request: Request, listId: string) => {
@@ -140,5 +140,22 @@ export const updateList = async (request: Request, listId: string) => {
 
   if (tagsError) console.error(tagsError)
 
-  return redirect(`/profile/lists/${listId}`)
+  return redirect(`/lists/${listId}`)
+}
+
+export const deleteList = async (request: Request, listId: string) => {
+  const response = new Response()
+  const supabase = createServerSupabase({ request, response })
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  invariant(user, 'You must be signed in to perform this action.')
+
+  const { error } = await supabase.from('lists').delete().eq('id', listId)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return redirect(`/lists`)
 }
