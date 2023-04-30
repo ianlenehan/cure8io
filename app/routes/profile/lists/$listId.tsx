@@ -1,8 +1,23 @@
 import type { LoaderArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { useLoaderData, Outlet, Link as RouterLink } from '@remix-run/react'
-import { Card, CardBody, Heading, Button, HStack, Stack, Flex, Icon } from '@chakra-ui/react'
-import { FiPlus, FiLock } from 'react-icons/fi'
+import { useLoaderData, Outlet, Link as RouterLink, useNavigate, useOutletContext } from '@remix-run/react'
+import {
+  Card,
+  CardBody,
+  Heading,
+  Button,
+  HStack,
+  Stack,
+  Flex,
+  Icon,
+  IconButton,
+  ButtonGroup,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from '@chakra-ui/react'
+import { FiPlus, FiLock, FiEdit3, FiChevronDown, FiTrash } from 'react-icons/fi'
 
 import { getSupabaseSession } from '~/api/auth.server'
 
@@ -18,11 +33,22 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     throw new Error(error.message)
   }
 
-  return json({ list: data }, { headers: response.headers })
+  const { data: interactions } = await supabase
+    .from('interactions')
+    .select('action, post_id')
+    .eq('list_id', params.listId)
+
+  return json({ list: data, interactions }, { headers: response.headers })
 }
 
 export default function List() {
   const { list } = useLoaderData<typeof loader>()
+
+  const navigate = useNavigate()
+
+  const handleEdit = () => {
+    navigate('edit')
+  }
 
   return (
     <Card variant="outline" width="100%">
@@ -38,11 +64,31 @@ export default function List() {
               )}
             </HStack>
 
-            <Button as={RouterLink} size="sm" leftIcon={<FiPlus />} variant="outline" to="new">
-              Add post
-            </Button>
+            <ButtonGroup isAttached variant="outline" size="sm">
+              <Button size="sm" leftIcon={<FiPlus />} width="100%">
+                Add post
+              </Button>
+              {list.visibility !== 'private_for_later' && (
+                <Menu>
+                  <MenuButton
+                    aria-label="more-options"
+                    as={IconButton}
+                    data-testid="pie-combo-menu-button"
+                    icon={<FiChevronDown />}
+                  />
+                  <MenuList>
+                    <MenuItem aria-label="Edit list" icon={<FiEdit3 />} onClick={handleEdit}>
+                      Edit list
+                    </MenuItem>
+                    <MenuItem aria-label="Delete list" icon={<FiTrash />} onClick={handleEdit}>
+                      Delete list
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              )}
+            </ButtonGroup>
           </Flex>
-          <Outlet />
+          <Outlet context={useOutletContext()} />
         </Stack>
       </CardBody>
     </Card>

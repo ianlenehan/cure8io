@@ -1,20 +1,18 @@
-import { Outlet, useSearchParams, Link, useLoaderData, useParams } from '@remix-run/react'
+import { Outlet, Link, useLoaderData, useParams, Link as RouterLink, useOutletContext } from '@remix-run/react'
 import { type ActionArgs, type LoaderArgs, json, redirect } from '@remix-run/node'
 import z from 'zod'
-import { Button, Box, Card, CardBody, Text, HStack, Icon } from '@chakra-ui/react'
+import { Button, Box, Card, CardBody, Text, HStack, Icon, useColorModeValue } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { FiPlus, FiStar } from 'react-icons/fi'
 import { profanity } from '@2toad/profanity'
 import invariant from 'tiny-invariant'
-import { useEffect } from 'react'
 
-import { CreateListModal } from '~/components/CreateListModal'
 import { ZeroState } from '~/components/ZeroState'
 import { PageHeader } from '~/components/PageHeader'
 import { getSupabaseSession } from '~/api/auth.server'
 import createServerSupabase from '~/utils/supabase.server'
 
-const newListSchema = z.object({
+const listSchema = z.object({
   name: z.string().min(1, { message: 'List requires a name' }),
   description: z.string().optional(),
   visibility: z.enum(['public', 'private']),
@@ -28,7 +26,7 @@ export const action = async ({ request }: ActionArgs) => {
   const tags = formData.get('tags') as string
   const tagIds = tags ? tags.split(',') : []
 
-  const schemaResult = newListSchema.safeParse({
+  const schemaResult = listSchema.safeParse({
     name,
     description,
     visibility,
@@ -99,8 +97,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const forLaterList = data.find((list) => list.visibility === 'private_for_later')
   const otherLists = data.filter((list) => list.visibility !== 'private_for_later')
   const lists = forLaterList ? [forLaterList, ...otherLists].filter(Boolean) : otherLists
+  const isNewListPath = request.url.endsWith('/new')
 
-  if (!params.listId && forLaterList) {
+  if (!params.listId && forLaterList && !isNewListPath) {
     return redirect(`/profile/lists/${forLaterList.id}`)
   }
 
@@ -109,22 +108,16 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 export default function Lists() {
   const { lists } = useLoaderData<typeof loader>()
-
+  const outletContext = useOutletContext()
   const { listId } = useParams()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const isModalOpen = searchParams.get('create_list') === 'true'
 
-  const handleCloseModal = () => {
-    searchParams.delete('create_list')
-    setSearchParams(searchParams)
-  }
-
-  const handleCreate = () => {
-    setSearchParams({ create_list: 'true' })
-  }
+  const altListBgColor = useColorModeValue('gray.50', 'gray.700')
+  const selectedListBgColor = useColorModeValue('gray.100', 'gray.600')
+  const listHoverBgColor = 'brand.300'
+  const textHoverColor = 'gray.900'
 
   const createButton = (
-    <Button colorScheme="brand" leftIcon={<Icon as={FiPlus} />} onClick={handleCreate} size="md" variant="outline">
+    <Button as={RouterLink} colorScheme="brand" leftIcon={<Icon as={FiPlus} />} to="new" size="md" variant="outline">
       Create list
     </Button>
   )
@@ -139,11 +132,12 @@ export default function Lists() {
             <Card overflow="hidden" variant="outline">
               {lists.map((list, index) => (
                 <CardBody
-                  bgColor={list.id === listId ? 'gray.100' : index % 2 == 0 ? undefined : 'gray.50'}
+                  bgColor={list.id === listId ? selectedListBgColor : index % 2 == 0 ? undefined : altListBgColor}
                   key={list.id}
                   as={Link}
                   to={list.id}
-                  _hover={{ bgColor: 'gray.100' }}
+                  role="group"
+                  _hover={{ bgColor: listHoverBgColor, color: textHoverColor }}
                 >
                   <HStack>
                     <Text fontSize="lg" fontWeight={500}>
@@ -152,7 +146,7 @@ export default function Lists() {
                     {list.visibility === 'private_for_later' && <Icon as={FiStar} color="yellow.500" />}
                   </HStack>
                   <HStack>
-                    <Text as="span" fontSize="sm" color="gray.500">
+                    <Text as="span" fontSize="sm" variant="faint" _groupHover={{ color: 'gray.700' }}>
                       Created:
                     </Text>
                     <Text as="span" fontSize="sm">
@@ -164,7 +158,7 @@ export default function Lists() {
             </Card>
           </Box>
           <Box maxWidth="800px" width="100%">
-            <Outlet />
+            <Outlet context={outletContext} />
           </Box>
         </HStack>
       ) : (
@@ -172,8 +166,6 @@ export default function Lists() {
           <Box marginTop="24px">{createButton}</Box>
         </ZeroState>
       )}
-
-      <CreateListModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </Box>
   )
 }

@@ -36,3 +36,11 @@ export type Batch = Database['public']['Tables']['batches']['Row']
 export type Post = Database['public']['Tables']['posts']['Row']
 
 export type Subscription = Database['public']['Tables']['subscriptions']['Row']
+
+export type Interaction = Database['public']['Tables']['interactions']['Row']
+
+export type ListErrors = {
+  name?: string[] | undefined
+  description?: string[] | undefined
+  visibility?: string[] | undefined
+}

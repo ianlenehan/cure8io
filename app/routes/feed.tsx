@@ -1,7 +1,7 @@
 import type { LoaderArgs, ActionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Link as RouterLink, useActionData, useSubmit } from '@remix-run/react'
-import { Box, Text, Link, Stack, Card, CardBody, useToast } from '@chakra-ui/react'
+import { Box, Text, Link, Stack, Card, CardBody, useToast, StackDivider } from '@chakra-ui/react'
 import invariant from 'tiny-invariant'
 import { useEffect } from 'react'
 
@@ -152,7 +152,7 @@ export default function Feed() {
     <Box height="100%">
       <PageHeader title="Feed" />
       {/* <Button onClick={signOut}>Sign Out</Button> */}
-      <Card maxWidth="1200px">
+      <Card maxWidth="960px">
         <CardBody>
           {!posts ? (
             <Text>
@@ -163,12 +163,12 @@ export default function Feed() {
               to discover lists to follow.
             </Text>
           ) : (
-            <Stack spacing="18px">
+            <Stack divider={<StackDivider />} spacing="18px">
               {posts.map((post) =>
                 post ? (
                   <div key={post.id}>
                     <Post
-                      isShowingIcons
+                      iconSet="feed"
                       post={post}
                       isClicked={interactions?.some(({ post_id, action }) => post_id === post.id && action === 'click')}
                       isSaved={interactions?.some(({ post_id, action }) => post_id === post.id && action === 'save')}

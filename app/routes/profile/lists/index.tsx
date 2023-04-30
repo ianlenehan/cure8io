@@ -1,3 +1,5 @@
+import { Text } from '@chakra-ui/react'
+
 export default function ListsIndex() {
-  return <div>Select a list from the... list</div>;
+  return <Text>Select a list!</Text>
 }
