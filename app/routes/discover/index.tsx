@@ -1,13 +1,6 @@
 import type { LoaderArgs, ActionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import {
-  useActionData,
-  useLoaderData,
-  useSearchParams,
-  Form,
-  useNavigation,
-  Link as RouterLink,
-} from '@remix-run/react'
+import { useActionData, useLoaderData, useSearchParams, useNavigation } from '@remix-run/react'
 import {
   Box,
   Input,
@@ -16,26 +9,17 @@ import {
   InputRightElement,
   Icon,
   Flex,
-  Card,
-  CardBody,
-  HStack,
-  Tag,
-  Heading,
-  Stack,
-  Text,
   Grid,
   useToast,
-  Link,
 } from '@chakra-ui/react'
 import { FiSearch, FiX } from 'react-icons/fi'
 import { F } from '@mobily/ts-belt'
 import { useRef, useEffect } from 'react'
 import invariant from 'tiny-invariant'
 
-import { PageHeader, SubscribeButton } from '~/components'
+import { DiscoverCard, PageHeader } from '~/components'
 import { toggleSubscription } from '~/api/subscriptions.server'
 import { getSupabaseSession } from '~/api/auth.server'
-import { isSubscribed } from '~/utils/helpers'
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
@@ -173,35 +157,7 @@ export default function Discover() {
 
       <Grid gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap="12px" maxWidth="1200px">
         {lists.map((list) => (
-          <Card key={list.id}>
-            <CardBody>
-              <Stack spacing="8">
-                <Stack alignItems="flex-start">
-                  <Heading as="h3" size="md">
-                    <Link as={RouterLink} to={`list/${list.id}`}>
-                      {list.name}{' '}
-                    </Link>
-                  </Heading>
-                  <Form method="post">
-                    <input type="hidden" name="listId" value={list.id} />
-                    <SubscribeButton isDisabled={isSubmitting} isSubscribed={isSubscribed(list.id, subscriptions)} />
-                  </Form>
-                </Stack>
-                <Stack>
-                  <Text color="gray.500">{list.description}</Text>
-                  {Array.isArray(list.tags) && (
-                    <HStack spacing="2">
-                      {list.tags.map(({ id, name }) => (
-                        <Tag key={id} size="sm">
-                          {name}
-                        </Tag>
-                      ))}
-                    </HStack>
-                  )}
-                </Stack>
-              </Stack>
-            </CardBody>
-          </Card>
+          <DiscoverCard key={list.id} listTags={list.tags || []} {...{ list, subscriptions, isSubmitting }} />
         ))}
       </Grid>
     </Box>

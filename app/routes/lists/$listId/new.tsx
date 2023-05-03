@@ -7,7 +7,6 @@ import {
   Input,
   Select,
   Stack,
-  Textarea,
   Divider,
   HStack,
   Flex,
@@ -23,6 +22,7 @@ import invariant from 'tiny-invariant'
 
 import createServerSupabase from '~/utils/supabase.server'
 import type { List } from '~/types'
+import { TipTap } from '~/components'
 
 import DateTimePickerStyles from 'react-datetime-picker/dist/DateTimePicker.css'
 import CalendarStyles from 'react-calendar/dist/Calendar.css'
@@ -167,7 +167,7 @@ export default function NewPost() {
 
         <FormControl id="description">
           <FormLabel htmlFor="description">Description</FormLabel>
-          <Textarea name="description" placeholder="Add a comment or description of what you're sharing" />
+          <TipTap name="description" />
         </FormControl>
 
         {!!batches?.length && (

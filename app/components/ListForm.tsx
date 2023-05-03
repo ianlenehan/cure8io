@@ -12,7 +12,7 @@ import {
   Button,
 } from '@chakra-ui/react'
 import { Form, useOutletContext, useNavigate } from '@remix-run/react'
-import ReactSelect from 'react-select/creatable'
+import { CreatableSelect } from 'chakra-react-select'
 import type { MultiValue } from 'react-select'
 import { useState } from 'react'
 import { profanity } from '@2toad/profanity'
@@ -110,7 +110,7 @@ export const ListForm = ({ errors, profanityErrors, isProcessing, list }: Props)
         <FormControl id="tags">
           <FormLabel>Tags</FormLabel>
           <Input type="hidden" name="tags" value={selectedTags.map((t) => t.value).join(',')} />
-          <ReactSelect
+          <CreatableSelect
             onInputChange={loadTags}
             options={tagOptions}
             onCreateOption={handleCreateTag}

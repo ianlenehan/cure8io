@@ -33,6 +33,7 @@ type Props = {
 
 export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkClick, interactions, lists }: Props) => {
   const { url, title, author, description, publish_date, list_id } = post
+  console.log('🚀 ~ file: Post.tsx:36 ~ Post ~ description:', description)
 
   const numberOfClicks = interactions?.filter((i) => i.action === 'click')?.length
   const numberOfSaves = interactions?.filter((i) => i.action === 'save')?.length
@@ -139,7 +140,29 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
       <Text variant="faint" fontSize="sm">
         {author}
       </Text>
-      <Text>{description}</Text>
+      {!!description && (
+        <Box
+          dangerouslySetInnerHTML={{ __html: description }}
+          sx={{
+            h1: {
+              fontSize: 'revert',
+              fontWeight: 'revert',
+            },
+            h2: {
+              fontSize: 'revert',
+              fontWeight: 'revert',
+            },
+            h3: {
+              fontSize: 'revert',
+              fontWeight: 'revert',
+            },
+            a: {
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            },
+          }}
+        />
+      )}
       <Flex justifyContent="space-between" marginTop="6px">
         <Text variant="faint" fontSize="sm">
           {isFuture(new Date(publish_date)) ? 'Scheduled for' : 'Published'}{' '}

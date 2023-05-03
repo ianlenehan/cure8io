@@ -56,7 +56,6 @@ const Text: ComponentStyleConfig = {
 }
 
 const theme = extendTheme({
-  initialColorMode: 'light',
   colors: {
     brand: brandColor,
   },

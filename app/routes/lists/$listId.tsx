@@ -1,7 +1,16 @@
 import { useEffect } from 'react'
-import type { LoaderArgs } from '@remix-run/node'
-import { json, redirect } from '@remix-run/node'
-import { useLoaderData, Outlet, useNavigation, useNavigate, useOutletContext, Form, useParams } from '@remix-run/react'
+import { json, redirect, type LoaderArgs } from '@remix-run/node'
+import {
+  useLoaderData,
+  Outlet,
+  useNavigation,
+  useNavigate,
+  useOutletContext,
+  Form,
+  useParams,
+  Link as RouterLink,
+  useLocation,
+} from '@remix-run/react'
 import {
   Button,
   ButtonGroup,
@@ -62,6 +71,9 @@ export default function List() {
 
   const { listId } = useParams()
 
+  const { pathname } = useLocation()
+  const isNewListPath = pathname.endsWith('/new')
+
   useEffect(() => {
     // close the delete modal when the listId changes
     // can't use `isOpen` as that will prevent modal from ever opening
@@ -87,29 +99,31 @@ export default function List() {
                 )}
               </HStack>
 
-              <ButtonGroup isAttached variant="outline" size="sm">
-                <Button size="sm" leftIcon={<FiPlus />} width="100%">
-                  Add post
-                </Button>
-                {list.visibility !== 'private_for_later' && (
-                  <Menu>
-                    <MenuButton
-                      aria-label="more-options"
-                      as={IconButton}
-                      data-testid="pie-combo-menu-button"
-                      icon={<FiChevronDown />}
-                    />
-                    <MenuList>
-                      <MenuItem aria-label="Edit list" icon={<FiEdit3 />} onClick={handleEdit}>
-                        Edit list
-                      </MenuItem>
-                      <MenuItem aria-label="Delete list" icon={<FiTrash />} onClick={onOpen}>
-                        Delete list
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                )}
-              </ButtonGroup>
+              {!isNewListPath && (
+                <ButtonGroup isAttached variant="outline" size="sm">
+                  <Button as={RouterLink} size="sm" leftIcon={<FiPlus />} width="100%" to="new">
+                    Add post
+                  </Button>
+                  {list.visibility !== 'private_for_later' && (
+                    <Menu>
+                      <MenuButton
+                        aria-label="more-options"
+                        as={IconButton}
+                        data-testid="pie-combo-menu-button"
+                        icon={<FiChevronDown />}
+                      />
+                      <MenuList>
+                        <MenuItem aria-label="Edit list" icon={<FiEdit3 />} onClick={handleEdit}>
+                          Edit list
+                        </MenuItem>
+                        <MenuItem aria-label="Delete list" icon={<FiTrash />} onClick={onOpen}>
+                          Delete list
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  )}
+                </ButtonGroup>
+              )}
             </Flex>
             <Outlet context={useOutletContext()} />
           </Stack>
