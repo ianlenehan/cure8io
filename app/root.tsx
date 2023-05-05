@@ -77,7 +77,7 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider {...{ theme }}>
-        <SideNav>
+        <SideNav currentUser={session?.user}>
           <Outlet context={{ supabase }} />
         </SideNav>
       </ChakraProvider>

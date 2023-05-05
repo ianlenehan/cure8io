@@ -33,13 +33,11 @@ type Props = {
 
 export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkClick, interactions, lists }: Props) => {
   const { url, title, author, description, publish_date, list_id } = post
-  console.log('🚀 ~ file: Post.tsx:36 ~ Post ~ description:', description)
 
   const numberOfClicks = interactions?.filter((i) => i.action === 'click')?.length
   const numberOfSaves = interactions?.filter((i) => i.action === 'save')?.length
 
   const interactionColor = useColorModeValue('gray.500', 'gray.400')
-  const plusColor = useColorModeValue('gray.600', 'gray.200')
 
   const handleLinkClick = () => {
     const formData = new FormData()
