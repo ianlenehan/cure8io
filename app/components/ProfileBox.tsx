@@ -2,14 +2,14 @@ import { Avatar, HStack, Text, useColorModeValue } from '@chakra-ui/react'
 import { Link } from '@remix-run/react'
 
 type Props = {
-  mame: string
+  name: string
   email?: string
   avatarUrl: string
   size?: 'sm' | 'lg'
+  borderTop?: string
 }
 
 export const ProfileBox = ({ name, avatarUrl, email, size = 'sm', borderTop }: Props) => {
-  console.log({ name, avatarUrl, email })
   const color = useColorModeValue('gray.900', 'white')
   const borderColor = useColorModeValue('gray.100', 'gray.700')
 

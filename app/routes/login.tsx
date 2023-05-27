@@ -58,7 +58,7 @@ export default function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3000/feed',
+        redirectTo: `${process.env.SITE_URL}/feed`,
       },
     })
 
