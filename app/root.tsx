@@ -22,14 +22,19 @@ export const links = () => {
 }
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const env = {
-    SUPABASE_URL: process.env.SUPABASE_URL!,
-    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
+  try {
+    const env = {
+      SUPABASE_URL: process.env.SUPABASE_URL!,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
+    }
+
+    const { session, response } = await getSupabaseSession(request)
+
+    return json({ env, session }, { headers: response.headers })
+  } catch (error) {
+    console.log('🚀 ~ file: root.tsx:35 ~ loader ~ error:', error)
+    // return json({ error: error.message }, { status: 500 })
   }
-
-  const { session, response } = await getSupabaseSession(request)
-
-  return json({ env, session }, { headers: response.headers })
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {

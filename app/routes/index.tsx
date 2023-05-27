@@ -14,13 +14,17 @@ export let meta = () => {
 }
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const response = new Response()
-  const supabase = createServerSupabase({ request, response })
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  try {
+    const response = new Response()
+    const supabase = createServerSupabase({ request, response })
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
 
-  return json({ session }, { headers: response.headers })
+    return json({ session }, { headers: response.headers })
+  } catch (error) {
+    console.log('🚀 ~ file: index.tsx:20 ~ loader ~ error:', error)
+  }
 }
 
 // https://remix.run/guides/routing#index-routes
