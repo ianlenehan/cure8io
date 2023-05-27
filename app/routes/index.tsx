@@ -1,9 +1,9 @@
 import { Container, Stack, Text, Image, Button, Flex, ButtonGroup } from '@chakra-ui/react'
 import { json, type LoaderArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-
-import createServerSupabase from '~/utils/supabase.server'
 import { Link } from 'react-router-dom'
+
+import { getSupabaseSession } from '~/api/auth.server'
 
 // https://remix.run/api/conventions#meta
 export let meta = () => {
@@ -14,17 +14,8 @@ export let meta = () => {
 }
 
 export const loader = async ({ request }: LoaderArgs) => {
-  try {
-    const response = new Response()
-    const supabase = createServerSupabase({ request, response })
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-
-    return json({ session }, { headers: response.headers })
-  } catch (error) {
-    console.log('🚀 ~ file: index.tsx:20 ~ loader ~ error:', error)
-  }
+  const { session, response } = await getSupabaseSession(request)
+  return json({ session }, { headers: response.headers })
 }
 
 // https://remix.run/guides/routing#index-routes
