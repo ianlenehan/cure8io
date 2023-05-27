@@ -35,7 +35,15 @@ export const loader = async ({ request }: LoaderArgs) => {
 export function ErrorBoundary({ error }: { error: Error }) {
   console.log('🚀 ~ file: root.tsx:42 ~ ErrorBoundary ~ error:', error)
   return (
-    <div>
+    <div
+      style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <h1>Error</h1>
       <p>{error.message}</p>
       <p>The stack trace is:</p>

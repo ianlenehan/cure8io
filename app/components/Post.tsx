@@ -24,7 +24,9 @@ import { Form } from '@remix-run/react'
 import type { Interaction, Post as PostType, List } from '~/types'
 
 type Props = {
-  post: PostType & { lists?: { name: string } }
+  post: PostType & {
+    lists: { name: string } | { name: string }[] | null
+  }
   iconSet?: 'feed' | 'list'
   isClicked?: boolean
   isSaved?: boolean
@@ -36,7 +38,7 @@ type Props = {
 
 export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkClick, interactions, lists }: Props) => {
   const { url, title, author, description, publish_date, list_id, lists: list } = post
-  const isLongDescription = description.length > 500
+  const isLongDescription = description?.length && description.length > 500
 
   const [isExpanded, setIsExpanded] = useBoolean()
 
@@ -161,11 +163,7 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
         {author}
       </Text>
       {!!description && (
-        <Collapse
-          startingHeight={isLongDescription ? '200px' : 'auto'}
-          in={!isLongDescription ? true : isExpanded}
-          overflow="hidden"
-        >
+        <Collapse startingHeight={isLongDescription ? '200px' : 'auto'} in={!isLongDescription ? true : isExpanded}>
           <Box
             dangerouslySetInnerHTML={{ __html: description }}
             sx={{
@@ -206,7 +204,7 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
               {isExpanded ? 'Collapse' : 'Show more...'}
             </Button>
           )}
-          {list ? <Text fontSize="sm">{list.name}</Text> : null}
+          {list && !Array.isArray(list) ? <Text fontSize="sm">{list.name}</Text> : null}
         </Flex>
 
         {numberOfClicks || numberOfSaves ? (

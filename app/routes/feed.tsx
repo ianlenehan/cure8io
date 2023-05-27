@@ -103,7 +103,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     .flatMap((s) =>
       s.lists && 'posts' in s.lists && Array.isArray(s.lists?.posts) ? s.lists.posts?.map((p) => p) : undefined
     )
-    .filter((p) => p !== null)
+    .filter((p) => !!p)
 
   const postIds = posts.map((p) => p?.id).filter(Boolean)
   const { data: interactions } = await supabase
