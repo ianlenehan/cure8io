@@ -6,7 +6,6 @@ import { FiPlus, FiStar } from 'react-icons/fi'
 import { profanity } from '@2toad/profanity'
 import invariant from 'tiny-invariant'
 
-import { ZeroState } from '~/components/ZeroState'
 import { PageHeader } from '~/components/PageHeader'
 import { getSupabaseSession } from '~/api/auth.server'
 import createServerSupabase from '~/utils/supabase.server'
