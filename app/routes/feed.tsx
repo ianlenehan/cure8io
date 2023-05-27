@@ -1,13 +1,19 @@
 import type { LoaderArgs, ActionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Link as RouterLink, useActionData, useSubmit } from '@remix-run/react'
-import { Box, Text, Link, Stack, Card, CardBody, useToast, StackDivider } from '@chakra-ui/react'
+import { Box, Button, Stack, Card, CardBody, useToast, StackDivider } from '@chakra-ui/react'
 import invariant from 'tiny-invariant'
 import { useEffect } from 'react'
 
-import { PageHeader, Post } from '~/components'
-// import type { SupabaseOutletContext } from '~/root'
+import { PageHeader, Post, ZeroState } from '~/components'
+
 import { getSupabaseSession } from '~/api/auth.server'
+
+// const feedSchema = z.object({
+//   actions: z.string(),
+//   postId: z.string(),
+//   listId: z.string(),
+// })
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
@@ -18,6 +24,9 @@ export const action = async ({ request }: ActionArgs) => {
   const title = formData.get('title') as string | undefined
   const author = formData.get('author') as string | undefined
   const description = formData.get('description') as string | undefined
+
+  const formValues = Object.fromEntries(formData)
+  console.log('🚀 ~ file: feed.tsx:23 ~ action ~ formValues:', formValues)
 
   const { session, supabase, response } = await getSupabaseSession(request)
   invariant(session, 'You must be logged in to complete this action')
@@ -31,7 +40,7 @@ export const action = async ({ request }: ActionArgs) => {
     invariant(postId, 'postId is required')
     invariant(listId, 'listId is required')
 
-    const id = `${postId}-${userId}-${listId}`
+    const id = `${postId}-${userId}-${listId}-click`
     await supabase
       .from('interactions')
       .upsert({ id, post_id: postId, user_id: userId, list_id: listId, action: 'click' })
@@ -54,7 +63,7 @@ export const action = async ({ request }: ActionArgs) => {
     invariant(url, 'url is required')
     invariant(title, 'title is required')
 
-    const id = `${postId}-${userId}-${listId}`
+    const id = `${postId}-${userId}-${listId}-save`
     await supabase
       .from('interactions')
       .upsert({ id, post_id: postId, user_id: userId, list_id: listId, action: 'save' })
@@ -83,7 +92,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   // const { data: posts, error: postsError } = await supabase.from('subscriptions').select('*')
   const { data: subscriptions, error: subscriptionsError } = await supabase
     .from('subscriptions')
-    .select(`*, lists(*, posts(*))`)
+    .select(`*, lists(*, posts(*, lists(name)))`)
     .eq('subscriber_id', session.user.id)
 
   if (subscriptionsError) {
@@ -139,29 +148,19 @@ export default function Feed() {
     submit(data, { method: 'POST' })
   }
 
-  // const { supabase } = useOutletContext<SupabaseOutletContext>()
-
-  // const signOut = async () => {
-  //   const { error } = await supabase.auth.signOut()
-
-  //   if (error) {
-  //     throw error
-  //   }
-  // }
   return (
     <Box height="100%">
       <PageHeader title="Feed" />
-      {/* <Button onClick={signOut}>Sign Out</Button> */}
-      <Card maxWidth="960px">
+      <Card maxWidth="960px" variant="outline">
         <CardBody>
-          {!posts ? (
-            <Text>
-              Subscribe to some lists to start seeing posts in your feed!{' '}
-              <Link as={RouterLink} to="/discover">
-                Click here
-              </Link>{' '}
-              to discover lists to follow.
-            </Text>
+          {!posts?.length ? (
+            <ZeroState title="Nothing here yet!" subtitle="Subscribe to some lists to start seeing posts in your feed!">
+              <Box marginTop="24px">
+                <Button as={RouterLink} colorScheme="brand" to="/discover" size="md" variant="outline">
+                  Discover lists
+                </Button>
+              </Box>
+            </ZeroState>
           ) : (
             <Stack divider={<StackDivider />} spacing="18px">
               {posts.map((post) =>

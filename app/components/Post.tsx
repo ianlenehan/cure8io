@@ -1,17 +1,20 @@
 import {
   Box,
-  Text,
-  Link,
+  Button,
+  Collapse,
   Flex,
   HStack,
-  IconButton,
   Icon,
-  useColorModeValue,
-  Tooltip,
+  IconButton,
+  Link,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
+  MenuList,
+  Text,
+  Tooltip,
+  useBoolean,
+  useColorModeValue,
 } from '@chakra-ui/react'
 import { isFuture, format } from 'date-fns'
 import { FiCheckCircle, FiPlus, FiTrash, FiSave, FiArrowRight } from 'react-icons/fi'
@@ -21,7 +24,7 @@ import { Form } from '@remix-run/react'
 import type { Interaction, Post as PostType, List } from '~/types'
 
 type Props = {
-  post: PostType
+  post: PostType & { lists?: { name: string } }
   iconSet?: 'feed' | 'list'
   isClicked?: boolean
   isSaved?: boolean
@@ -32,7 +35,10 @@ type Props = {
 }
 
 export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkClick, interactions, lists }: Props) => {
-  const { url, title, author, description, publish_date, list_id } = post
+  const { url, title, author, description, publish_date, list_id, lists: list } = post
+  const isLongDescription = description.length > 500
+
+  const [isExpanded, setIsExpanded] = useBoolean()
 
   const numberOfClicks = interactions?.filter((i) => i.action === 'click')?.length
   const numberOfSaves = interactions?.filter((i) => i.action === 'save')?.length
@@ -45,6 +51,22 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
     formData.set('postId', post.id)
     formData.set('listId', list_id)
     onLinkClick?.(formData)
+  }
+
+  const renderGradient = () => {
+    if (isExpanded || !isLongDescription) return null
+
+    return (
+      <Box
+        background="linear-gradient(to top, white, transparent)"
+        className="gradient"
+        position="absolute"
+        bottom="27px"
+        left="0px"
+        width="100%"
+        height="70px"
+      />
+    )
   }
 
   const inputs = (
@@ -126,7 +148,7 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
   }
 
   return (
-    <Box paddingX="12px" opacity={isClicked ? 0.6 : 1}>
+    <Box paddingX="12px" opacity={isClicked ? 0.6 : 1} position="relative">
       <HStack justifyContent="space-between">
         <Text fontSize="xl">
           <Link href={url} onClick={handleLinkClick} target="_blank">
@@ -139,33 +161,53 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
         {author}
       </Text>
       {!!description && (
-        <Box
-          dangerouslySetInnerHTML={{ __html: description }}
-          sx={{
-            h1: {
-              fontSize: 'revert',
-              fontWeight: 'revert',
-            },
-            h2: {
-              fontSize: 'revert',
-              fontWeight: 'revert',
-            },
-            h3: {
-              fontSize: 'revert',
-              fontWeight: 'revert',
-            },
-            a: {
-              cursor: 'pointer',
-              textDecoration: 'underline',
-            },
-          }}
-        />
+        <Collapse
+          startingHeight={isLongDescription ? '200px' : 'auto'}
+          in={!isLongDescription ? true : isExpanded}
+          overflow="hidden"
+        >
+          <Box
+            dangerouslySetInnerHTML={{ __html: description }}
+            sx={{
+              h1: {
+                fontSize: 'revert',
+                fontWeight: 'revert',
+              },
+              h2: {
+                fontSize: 'revert',
+                fontWeight: 'revert',
+              },
+              h3: {
+                fontSize: 'revert',
+                fontWeight: 'revert',
+              },
+              a: {
+                cursor: 'pointer',
+                textDecoration: 'underline',
+              },
+              p: {
+                paddingBottom: '8px',
+              },
+            }}
+          />
+
+          {renderGradient()}
+        </Collapse>
       )}
       <Flex justifyContent="space-between" marginTop="6px">
-        <Text variant="faint" fontSize="sm">
-          {isFuture(new Date(publish_date)) ? 'Scheduled for' : 'Published'}{' '}
-          {format(new Date(publish_date), 'd MMM yyy')}
-        </Text>
+        <Flex justifyContent="space-between" width="100%">
+          <Text variant="faint" fontSize="sm">
+            {isFuture(new Date(publish_date)) ? 'Scheduled for' : 'Published'}{' '}
+            {format(new Date(publish_date), 'd MMM yyy')}
+          </Text>
+
+          {isLongDescription && (
+            <Button onClick={setIsExpanded.toggle} size="xs" variant="link">
+              {isExpanded ? 'Collapse' : 'Show more...'}
+            </Button>
+          )}
+          {list ? <Text fontSize="sm">{list.name}</Text> : null}
+        </Flex>
 
         {numberOfClicks || numberOfSaves ? (
           <HStack>

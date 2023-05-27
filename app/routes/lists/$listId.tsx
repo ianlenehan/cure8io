@@ -8,7 +8,6 @@ import {
   useOutletContext,
   Form,
   useParams,
-  Link as RouterLink,
   useLocation,
 } from '@remix-run/react'
 import {
@@ -39,6 +38,7 @@ import {
 import { FiPlus, FiLock, FiEdit3, FiChevronDown, FiTrash } from 'react-icons/fi'
 
 import { getSupabaseSession } from '~/api/auth.server'
+import { pluralise } from '~/utils/helpers'
 
 export const loader = async ({ params, request }: LoaderArgs) => {
   const { session, supabase, response } = await getSupabaseSession(request)
@@ -52,16 +52,18 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     throw new Error(error.message)
   }
 
+  const { data: subscriptions } = await supabase.from('subscriptions').select('id').eq('list_id', params.listId)
   const { data: interactions } = await supabase
     .from('interactions')
     .select('action, post_id')
     .eq('list_id', params.listId)
 
-  return json({ list: data, interactions }, { headers: response.headers })
+  return json({ list: data, interactions, subscribed: subscriptions.length }, { headers: response.headers })
 }
 
 export default function List() {
-  const { list } = useLoaderData<typeof loader>()
+  const { list, interactions, subscribed } = useLoaderData<typeof loader>()
+  console.log('🚀 ~ file: $listId.tsx:65 ~ List ~ interactions, subscribed:', interactions, subscribed)
 
   const navigate = useNavigate()
   const navigation = useNavigation()
@@ -84,6 +86,12 @@ export default function List() {
     navigate('edit')
   }
 
+  const handleAddPost = () => {
+    navigate('new')
+  }
+
+  const isPrivateList = ['private', 'private_for_later'].includes(list.visibility)
+
   return (
     <>
       <Card variant="outline" width="100%">
@@ -91,17 +99,22 @@ export default function List() {
           <Stack>
             <Flex justifyContent="space-between">
               <HStack>
-                <Heading as="h3" size="md">
-                  {list.name}{' '}
-                </Heading>
-                {['private', 'private_for_later'].includes(list.visibility) && (
-                  <Icon boxSize="14px" color="gray.500" as={FiLock} />
-                )}
+                <Stack>
+                  <Heading as="h3" size="md">
+                    {list.name}{' '}
+                  </Heading>
+                  {!isPrivateList && (
+                    <Text fontSize="xs" variant="faint">
+                      {subscribed} {pluralise(subscribed, 'subscriber')}
+                    </Text>
+                  )}
+                </Stack>
+                {isPrivateList && <Icon boxSize="14px" color="gray.500" as={FiLock} />}
               </HStack>
 
               {!isNewListPath && (
                 <ButtonGroup isAttached variant="outline" size="sm">
-                  <Button as={RouterLink} size="sm" leftIcon={<FiPlus />} width="100%" to="new">
+                  <Button onClick={handleAddPost} leftIcon={<FiPlus />} width="100%">
                     Add post
                   </Button>
                   {list.visibility !== 'private_for_later' && (

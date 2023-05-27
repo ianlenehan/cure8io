@@ -1,6 +1,6 @@
 import { Button, HStack } from '@chakra-ui/react'
 import type { Editor } from '@tiptap/react'
-import { HiOutlineCodeBracket } from 'react-icons/hi2'
+import { HiOutlineCodeBracket, HiListBullet, HiOutlineListBullet } from 'react-icons/hi2'
 
 import { AddHyperlink } from './AddHyperlink'
 
@@ -75,7 +75,7 @@ export const MenuBar = ({ editor }: MenuProps) => {
       >
         h3
       </Button>
-      {/* <Button
+      <Button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         variant={editor.isActive('bulletList') ? 'solid' : 'ghost'}
         size="sm"
@@ -88,7 +88,7 @@ export const MenuBar = ({ editor }: MenuProps) => {
         size="sm"
       >
         <HiOutlineListBullet />
-      </Button> */}
+      </Button>
       {/* <Button
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         variant={editor.isActive('blockquote') ? 'ghost' : 'ghost'}

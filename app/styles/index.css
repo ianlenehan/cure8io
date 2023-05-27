@@ -12,6 +12,11 @@
 * {
   margin: 0;
 }
+
+ol,
+ul {
+  margin-left: 40px;
+}
 /*
   3. Allow percentage-based heights in the application
 */
@@ -69,30 +74,25 @@ h6 {
 }
 
 @font-face {
-  font-family: "OpenSans";
+  font-family: 'OpenSans';
   font-style: normal;
   font-weight: 400;
-  src: local(""),
-    url("/fonts/OpenSans/open-sans-v27-latin-regular.woff2") format("woff2"),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url("/fonts/OpenSans/open-sans-v27-latin-regular.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: local(''), url('/fonts/OpenSans/open-sans-v27-latin-regular.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */ url('/fonts/OpenSans/open-sans-v27-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 @font-face {
-  font-family: "Bitter";
+  font-family: 'Bitter';
   font-style: normal;
   font-weight: 400;
-  src: local(""),
-    url("/fonts/Bitter/Bitter-VariableFont_wght.ttf") format("ttf"),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url("/fonts/Bitter/Bitter-VariableFont_wght.ttf") format("ttf"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: local(''), url('/fonts/Bitter/Bitter-VariableFont_wght.ttf') format('ttf'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */ url('/fonts/Bitter/Bitter-VariableFont_wght.ttf') format('ttf'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 @font-face {
-  font-family: "Roboto";
+  font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
-  src: local(""), url("/fonts/Roboto/Roboto-Regular.ttf") format("ttf"),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url("/fonts/Roboto/Roboto-Medium.ttf") format("ttf"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+  src: local(''), url('/fonts/Roboto/Roboto-Regular.ttf') format('ttf'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */ url('/fonts/Roboto/Roboto-Medium.ttf') format('ttf'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }

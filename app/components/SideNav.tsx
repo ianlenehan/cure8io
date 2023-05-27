@@ -27,8 +27,8 @@ type LinkItemProps = {
 
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Feed', icon: FiHome, to: 'feed' },
-  { name: 'Discover', icon: FiCompass, to: 'discover' },
   { name: 'My lists', icon: FiLayers, to: 'lists' },
+  { name: 'Discover', icon: FiCompass, to: 'discover' },
 ]
 
 type NavItemProps = FlexProps & {
@@ -99,7 +99,12 @@ const SidebarContent = ({ onClose, currentUser, ...rest }: SidebarProps) => {
           </NavItem>
         ))}
       </Box>
-      <ProfileBox userData={currentUser.user_metadata} />
+      <ProfileBox
+        avatarUrl={currentUser.user_metadata.avatar_url}
+        name={currentUser.user_metadata.full_name}
+        email={currentUser.email}
+        borderTop="1px"
+      />
     </Box>
   )
 }
@@ -113,7 +118,9 @@ export const SideNav = ({ children, currentUser }: SideNavProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const matches = useMatches()
-  const hideNavSteps = matches.some((match) => ['routes/signin', 'routes/login', 'routes/index'].includes(match.id))
+  const hideNavSteps = matches.some((match) =>
+    ['routes/signin', 'routes/signup', 'routes/login', 'routes/index'].includes(match.id)
+  )
 
   const background = useColorModeValue('gray.50', 'gray.900')
 

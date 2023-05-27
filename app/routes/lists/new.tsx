@@ -21,7 +21,7 @@ export default function NewList() {
   const isProcessing = ['submitting', 'loading'].includes(navigation.state)
 
   return (
-    <Card>
+    <Card variant="outline">
       <CardHeader>
         <Heading as="h3" size="md">
           Create a new list

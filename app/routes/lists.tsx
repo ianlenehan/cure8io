@@ -1,8 +1,7 @@
 import { Outlet, Link, useLoaderData, useParams, Link as RouterLink, useOutletContext } from '@remix-run/react'
 import { type ActionArgs, type LoaderArgs, json, redirect } from '@remix-run/node'
 import z from 'zod'
-import { Button, Box, Card, CardBody, Text, HStack, Icon, useColorModeValue } from '@chakra-ui/react'
-import { format } from 'date-fns'
+import { Button, Box, HStack, Stack, Icon } from '@chakra-ui/react'
 import { FiPlus, FiStar } from 'react-icons/fi'
 import { profanity } from '@2toad/profanity'
 import invariant from 'tiny-invariant'
@@ -111,11 +110,6 @@ export default function Lists() {
   const outletContext = useOutletContext()
   const { listId } = useParams()
 
-  const altListBgColor = useColorModeValue('gray.50', 'gray.700')
-  const selectedListBgColor = useColorModeValue('gray.100', 'gray.600')
-  const listHoverBgColor = 'brand.300'
-  const textHoverColor = 'gray.900'
-
   const createButton = (
     <Button as={RouterLink} colorScheme="brand" leftIcon={<Icon as={FiPlus} />} to="new" size="md" variant="outline">
       Create list
@@ -126,46 +120,26 @@ export default function Lists() {
     <Box height="100%">
       <PageHeader title="Lists">{createButton}</PageHeader>
 
-      {lists.length ? (
-        <HStack alignItems="flex-start">
-          <Box maxHeight="100%" overflowY="auto" width="300px">
-            <Card overflow="hidden" variant="outline">
-              {lists.map((list, index) => (
-                <CardBody
-                  bgColor={list.id === listId ? selectedListBgColor : index % 2 == 0 ? undefined : altListBgColor}
-                  key={list.id}
-                  as={Link}
-                  to={list.id}
-                  role="group"
-                  _hover={{ bgColor: listHoverBgColor, color: textHoverColor }}
-                >
-                  <HStack>
-                    <Text fontSize="lg" fontWeight={500}>
-                      {list.name}
-                    </Text>
-                    {list.visibility === 'private_for_later' && <Icon as={FiStar} color="yellow.500" />}
-                  </HStack>
-                  <HStack>
-                    <Text as="span" fontSize="sm" variant="faint" _groupHover={{ color: 'gray.700' }}>
-                      Created:
-                    </Text>
-                    <Text as="span" fontSize="sm">
-                      {format(new Date(list.created_at), 'd MMM yyy')}
-                    </Text>
-                  </HStack>
-                </CardBody>
-              ))}
-            </Card>
-          </Box>
-          <Box maxWidth="800px" width="100%">
-            <Outlet context={outletContext} />
-          </Box>
+      <Stack>
+        <HStack>
+          {lists.map((list) => (
+            <Button
+              variant={list.id === listId ? 'outline' : 'ghost'}
+              key={list.id}
+              as={Link}
+              to={list.id}
+              size="sm"
+              rightIcon={list.visibility === 'private_for_later' ? <Icon as={FiStar} color="yellow.500" /> : undefined}
+            >
+              {list.name}
+            </Button>
+          ))}
         </HStack>
-      ) : (
-        <ZeroState>
-          <Box marginTop="24px">{createButton}</Box>
-        </ZeroState>
-      )}
+
+        <Box maxWidth="960px" width="100%">
+          <Outlet context={outletContext} />
+        </Box>
+      </Stack>
     </Box>
   )
 }

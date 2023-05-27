@@ -16,7 +16,7 @@ type Props = {
 
 export const DiscoverCard = ({ list, listTags, subscriptions, isSubmitting }: Props) => {
   return (
-    <Card key={list.id}>
+    <Card key={list.id} variant="outline">
       <CardBody>
         <Stack spacing="8">
           <Stack alignItems="flex-start">

@@ -2,24 +2,35 @@ import { Avatar, HStack, Text, useColorModeValue } from '@chakra-ui/react'
 import { Link } from '@remix-run/react'
 
 type Props = {
-  userData: {
-    full_name: string
-    email: string
-    avatar_url: string
-  }
+  mame: string
+  email?: string
+  avatarUrl: string
+  size?: 'sm' | 'lg'
 }
 
-export const ProfileBox = ({ userData }: Props) => {
+export const ProfileBox = ({ name, avatarUrl, email, size = 'sm', borderTop }: Props) => {
+  console.log({ name, avatarUrl, email })
   const color = useColorModeValue('gray.900', 'white')
   const borderColor = useColorModeValue('gray.100', 'gray.700')
 
   return (
-    <HStack as={Link} cursor="pointer" paddingY="24px" paddingX="12px" borderTop="1px" borderColor={borderColor}>
-      <Avatar color={color} name={userData.full_name} src={userData.avatar_url} size="sm" />
+    <HStack
+      as={Link}
+      cursor="pointer"
+      paddingY="24px"
+      paddingX="12px"
+      borderTop={borderTop}
+      borderColor={borderColor}
+      to="/profile"
+      spacing={size === 'lg' ? '12px' : '8px'}
+    >
+      <Avatar color={color} name={name} src={avatarUrl} size={size} />
       <div>
-        <Text color={color}>{userData.full_name}</Text>
-        <Text fontSize="sm" variant="faint">
-          {userData.email}
+        <Text color={color} fontSize={size === 'lg' ? 'xl' : undefined}>
+          {name}
+        </Text>
+        <Text fontSize={size} variant="faint">
+          {email}
         </Text>
       </div>
     </HStack>

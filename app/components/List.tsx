@@ -21,7 +21,7 @@ export const List = ({ list, lists, tags, posts, interactions }: Props) => {
 
   return (
     <>
-      <Text variant="faint">{list.description}</Text>
+      <Text>{list.description}</Text>
       {hasTags && (
         <HStack>
           {tags.map(({ id, name }) => (

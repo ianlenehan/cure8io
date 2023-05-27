@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Box, useColorModeValue, Card } from '@chakra-ui/react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { Color } from '@tiptap/extension-color'
@@ -7,7 +8,6 @@ import TextStyle from '@tiptap/extension-text-style'
 import StarterKit from '@tiptap/starter-kit'
 
 import { MenuBar } from './MenuBar'
-import { useState } from 'react'
 
 type Props = {
   defaultValue?: string
@@ -66,6 +66,16 @@ export const TipTap = ({ defaultValue = '', name }: Props) => {
         a: {
           cursor: 'pointer',
           textDecoration: 'underline',
+        },
+        ul: {
+          listStyleType: 'disc',
+          marginLeft: '40px',
+          marginTop: '12px',
+        },
+        ol: {
+          listStyleType: 'decimal',
+          marginLeft: '40px',
+          marginTop: '12px',
         },
       }}
     >
