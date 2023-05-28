@@ -33,6 +33,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   }
 
   const siteUrl = process.env.SITE_URL
+  console.log('🚀 ~ file: login.tsx:36 ~ loader ~ siteUrl:', siteUrl)
 
   return json({ siteUrl })
 }
