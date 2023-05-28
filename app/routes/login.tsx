@@ -17,8 +17,8 @@ import {
   Divider,
   useBoolean,
 } from '@chakra-ui/react'
-import { Link as RouterLink, useOutletContext, useNavigation, useLoaderData } from '@remix-run/react'
-import { json, redirect, type LoaderArgs } from '@remix-run/node'
+import { Link as RouterLink, useOutletContext, useNavigation } from '@remix-run/react'
+import { redirect, type LoaderArgs } from '@remix-run/node'
 import { useState } from 'react'
 import z from 'zod'
 
@@ -32,10 +32,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     return redirect('/feed')
   }
 
-  const siteUrl = process.env.SITE_URL
-  console.log('🚀 ~ file: login.tsx:36 ~ loader ~ siteUrl:', siteUrl)
-
-  return json({ siteUrl })
+  return null
 }
 
 const schema = z.object({
@@ -46,7 +43,6 @@ const schema = z.object({
 type FormattedErrors = z.inferFormattedError<typeof schema>
 
 export default function Login() {
-  const { siteUrl } = useLoaderData<{ siteUrl: string }>()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<FormattedErrors>()
@@ -61,9 +57,6 @@ export default function Login() {
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: `${siteUrl}/feed`,
-      },
     })
 
     if (error) {

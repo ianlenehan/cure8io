@@ -1,6 +1,5 @@
 import { Container, Stack, Text, Image, Button, Flex, ButtonGroup } from '@chakra-ui/react'
-import { json, type LoaderArgs } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { redirect, type LoaderArgs } from '@remix-run/node'
 import { Link } from 'react-router-dom'
 
 import { getSupabaseSession } from '~/api/auth.server'
@@ -14,27 +13,28 @@ export let meta = () => {
 }
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const { session, response } = await getSupabaseSession(request)
-  return json({ session }, { headers: response.headers })
+  const { session } = await getSupabaseSession(request)
+
+  if (session) {
+    return redirect('/feed')
+  }
+
+  return null
 }
 
 // https://remix.run/guides/routing#index-routes
 export default function Index() {
-  const { session } = useLoaderData<typeof loader>()
-
   return (
     <Container maxW={'5xl'}>
       <Flex justifyContent={'flex-end'} mt={4}>
-        {session ? null : (
-          <ButtonGroup>
-            <Button as={Link} to="login" size="sm" variant="ghost">
-              Sign In
-            </Button>
-            <Button as={Link} colorScheme="brand" to="signup" size="sm">
-              Sign Up
-            </Button>
-          </ButtonGroup>
-        )}
+        <ButtonGroup>
+          <Button as={Link} to="login" size="sm" variant="ghost">
+            Sign In
+          </Button>
+          <Button as={Link} colorScheme="brand" to="signup" size="sm">
+            Sign Up
+          </Button>
+        </ButtonGroup>
       </Flex>
       <Stack textAlign={'center'} align={'center'} spacing={{ base: 8, md: 10 }} py={{ base: 40, md: 28 }}>
         <div>

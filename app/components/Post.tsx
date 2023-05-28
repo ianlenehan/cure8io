@@ -38,7 +38,7 @@ type Props = {
 
 export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkClick, interactions, lists }: Props) => {
   const { url, title, author, description, publish_date, list_id, lists: list } = post
-  const isLongDescription = description?.length && description.length > 500
+  const isLongDescription = !!description?.length && description.length > 500
 
   const [isExpanded, setIsExpanded] = useBoolean()
 
@@ -108,7 +108,6 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
           <Form method="post">
             <HStack>
               {inputs}
-              !!
               {lists?.length ? (
                 <Menu>
                   <MenuButton

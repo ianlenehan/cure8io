@@ -3,7 +3,7 @@ node_modules
 /.cache
 /public/build
 /.netlify
-.env
+.env*
 .DS_Store
 
 serviceAccountKey.json
