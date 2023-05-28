@@ -25,8 +25,7 @@ export const action = async ({ request }: ActionArgs) => {
   const author = formData.get('author') as string | undefined
   const description = formData.get('description') as string | undefined
 
-  const formValues = Object.fromEntries(formData)
-  console.log('🚀 ~ file: feed.tsx:23 ~ action ~ formValues:', formValues)
+  // const formValues = Object.fromEntries(formData)
 
   const { session, supabase, response } = await getSupabaseSession(request)
   invariant(session, 'You must be logged in to complete this action')

@@ -58,12 +58,11 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     .select('action, post_id')
     .eq('list_id', params.listId)
 
-  return json({ list: data, interactions, subscribed: subscriptions.length }, { headers: response.headers })
+  return json({ list: data, interactions, subscribed: subscriptions?.length }, { headers: response.headers })
 }
 
 export default function List() {
-  const { list, interactions, subscribed } = useLoaderData<typeof loader>()
-  console.log('🚀 ~ file: $listId.tsx:65 ~ List ~ interactions, subscribed:', interactions, subscribed)
+  const { list, subscribed } = useLoaderData<typeof loader>()
 
   const navigate = useNavigate()
   const navigation = useNavigation()
@@ -103,7 +102,7 @@ export default function List() {
                   <Heading as="h3" size="md">
                     {list.name}{' '}
                   </Heading>
-                  {!isPrivateList && (
+                  {!isPrivateList && !!subscribed && (
                     <Text fontSize="xs" variant="faint">
                       {subscribed} {pluralise(subscribed, 'subscriber')}
                     </Text>
