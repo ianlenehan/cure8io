@@ -109,7 +109,7 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
             <HStack>
               {inputs}
               !!
-              {lists?.length && (
+              {lists?.length ? (
                 <Menu>
                   <MenuButton
                     as={IconButton}
@@ -128,7 +128,7 @@ export const Post = ({ post, iconSet, isClicked, isProcessing, isSaved, onLinkCl
                     ))}
                   </MenuList>
                 </Menu>
-              )}
+              ) : null}
               <IconButton
                 name="action"
                 value="delete"
