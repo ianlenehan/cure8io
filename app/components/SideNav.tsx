@@ -100,8 +100,8 @@ const SidebarContent = ({ onClose, currentUser, ...rest }: SidebarProps) => {
         ))}
       </Box>
       <ProfileBox
-        avatarUrl={currentUser.user_metadata.avatar_url}
-        name={currentUser.user_metadata.full_name}
+        avatarUrl={currentUser.user_metadata?.avatar_url}
+        name={currentUser.user_metadata?.full_name}
         email={currentUser.email}
         borderTop="1px"
       />
