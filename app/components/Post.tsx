@@ -25,7 +25,7 @@ import type { Interaction, Post as PostType, List } from '~/types'
 
 type Props = {
   post: PostType & {
-    lists: { name: string } | { name: string }[] | null
+    lists?: { name: string } | { name: string }[] | null
   }
   iconSet?: 'feed' | 'list'
   isClicked?: boolean

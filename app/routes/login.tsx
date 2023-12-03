@@ -55,8 +55,12 @@ export default function Login() {
   const { supabase } = useOutletContext<SupabaseOutletContext>()
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error, data } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      // enable this in dev only - configure in supabase https://supabase.com/dashboard/project/uhgsbvjanbwdcnmpsowu/auth/url-configuration
+      // options: {
+      //   redirectTo: 'http://localhost:3000',
+      // },
     })
 
     if (error) {
