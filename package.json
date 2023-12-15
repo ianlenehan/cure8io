@@ -30,6 +30,7 @@
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
+    "axios": "^1.6.2",
     "chakra-react-select": "^4.6.0",
     "cross-env": "^7.0.3",
     "date-fns": "^2.29.3",
