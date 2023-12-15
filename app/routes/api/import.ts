@@ -24,7 +24,7 @@ export const action = async ({ request }: ActionArgs) => {
         'https://api.openai.com/v1/chat/completions',
         {
           model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: prompt }],
+          messages: [{ role: 'user', content: `${prompt}: ${emailBody}` }],
           temperature: 0.5,
         },
         {
