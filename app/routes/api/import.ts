@@ -19,12 +19,12 @@ export const action = async ({ request }: ActionArgs) => {
     case 'POST': {
       const payload = await request.json()
       const emailBody = payload.body
-      console.log('🚀 ~ file: import.ts:22 ~ action ~ emailBody:', emailBody)
+      console.log('🚀 ~ file: import.ts:22 ~ action ~ emailBody:')
 
       const res = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {
-          model: 'gpt-3.5-turbo-16k-0613',
+          model: 'gpt-3.5-turbo-16k',
           messages: [{ role: 'user', content: `${prompt}: ${emailBody}` }],
           temperature: 0.5,
         },
