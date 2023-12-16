@@ -38,6 +38,7 @@ export const action = async ({ request }: ActionArgs) => {
 
       const { choices } = res.data
       const suggestion = JSON.parse(choices[0].message.content)
+      console.log('🚀 ~ file: import.ts:41 ~ action ~ suggestion:', suggestion)
 
       return json({ success: true, suggestion }, 200)
     }
