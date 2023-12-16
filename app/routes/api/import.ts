@@ -19,6 +19,7 @@ export const action = async ({ request }: ActionArgs) => {
     case 'POST': {
       const payload = await request.json()
       const emailBody = payload.body
+      console.log('🚀 ~ file: import.ts:22 ~ action ~ emailBody:', emailBody)
 
       const res = await axios.post(
         'https://api.openai.com/v1/chat/completions',
@@ -35,6 +36,7 @@ export const action = async ({ request }: ActionArgs) => {
           },
         }
       )
+      console.log('🚀 ~ file: import.ts:39 ~ action ~ res:', res)
 
       const { choices } = res.data
       const suggestion = JSON.parse(choices[0].message.content)
