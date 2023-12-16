@@ -24,7 +24,7 @@ export const action = async ({ request }: ActionArgs) => {
       const res = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {
-          model: 'gpt-3.5-turbo-0613',
+          model: 'gpt-4',
           messages: [{ role: 'user', content: `${prompt}: ${emailBody}` }],
           temperature: 0.2,
         },
