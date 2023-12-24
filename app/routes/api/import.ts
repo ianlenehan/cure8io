@@ -25,7 +25,7 @@ export const action = async ({ request }: ActionArgs) => {
 
       const stream = await openai.chat.completions.create({
         model: 'gpt-4',
-        messages: [{ role: 'user', content: 'Say this is a test' }],
+        messages: [{ role: 'user', content: `${prompt}: ${emailBody}` }],
         stream: true,
       })
       for await (const chunk of stream) {
