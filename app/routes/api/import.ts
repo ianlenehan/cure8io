@@ -27,6 +27,7 @@ export const action = async ({ request }: ActionArgs) => {
           model: 'gpt-4',
           messages: [{ role: 'user', content: `${prompt}: ${emailBody}` }],
           temperature: 0.2,
+          stream: true,
         },
         {
           headers: {
