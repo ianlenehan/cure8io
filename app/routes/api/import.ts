@@ -19,9 +19,9 @@ const prompt =
 export const action = async ({ request }: ActionArgs) => {
   switch (request.method) {
     case 'POST': {
-      const payload = await request.json()
-      // const emailBody = payload.body
-      console.log('🚀 ~ file: import.ts:22 ~ action ~ payload TURBO:', payload)
+      const { data, sender } = await request.json()
+      console.log('🚀 ~ file: import.ts:23 ~ action ~ sender:', sender)
+      console.log('🚀 ~ file: import.ts:22 ~ action ~ data:', data)
 
       // const stream = await openai.chat.completions.create({
       //   model: 'gpt-4',
