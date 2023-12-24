@@ -3,9 +3,8 @@ import { json } from '@remix-run/node'
 import axios from 'axios'
 import OpenAI from 'openai'
 
-const openai = new OpenAI()
-
 const apiKey = process.env.CHAT_GPT_KEY
+const openai = new OpenAI({ apiKey })
 
 const prompt =
   'I am going to provide you with the body of an email.' +
