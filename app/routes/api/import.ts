@@ -20,18 +20,18 @@ export const action = async ({ request }: ActionArgs) => {
   switch (request.method) {
     case 'POST': {
       const payload = await request.json()
-      const emailBody = payload.body
-      console.log('🚀 ~ file: import.ts:22 ~ action ~ node TURBO:')
+      // const emailBody = payload.body
+      console.log('🚀 ~ file: import.ts:22 ~ action ~ payload TURBO:', payload)
 
-      const stream = await openai.chat.completions.create({
-        model: 'gpt-4',
-        messages: [{ role: 'user', content: `${prompt}: ${emailBody}` }],
-        stream: true,
-      })
-      for await (const chunk of stream) {
-        console.log('??', chunk.choices[0]?.delta?.content)
-        process.stdout.write(chunk.choices[0]?.delta?.content || '')
-      }
+      // const stream = await openai.chat.completions.create({
+      //   model: 'gpt-4',
+      //   messages: [{ role: 'user', content: `${prompt}: ${emailBody}` }],
+      //   stream: true,
+      // })
+      // for await (const chunk of stream) {
+      //   console.log('??', chunk.choices[0]?.delta?.content)
+      //   process.stdout.write(chunk.choices[0]?.delta?.content || '')
+      // }
 
       // const res = await axios.post(
       //   'https://api.openai.com/v1/chat/completions',
@@ -55,7 +55,7 @@ export const action = async ({ request }: ActionArgs) => {
       // const suggestion = JSON.parse(choices[0].message.content)
       // console.log('🚀 ~ file: import.ts:41 ~ action ~ suggestion:', suggestion)
 
-      return json({ success: true, suggestion }, 200)
+      return json({ success: true }, 200)
     }
   }
 }
