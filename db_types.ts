@@ -40,6 +40,7 @@ export interface Database {
           created_at: string
           description: string | null
           id: string
+          issue_id: string | null
           newsletter_id: string | null
           status: string
           title: string
@@ -50,6 +51,7 @@ export interface Database {
           created_at?: string
           description?: string | null
           id?: string
+          issue_id?: string | null
           newsletter_id?: string | null
           status?: string
           title: string
@@ -60,13 +62,29 @@ export interface Database {
           created_at?: string
           description?: string | null
           id?: string
+          issue_id?: string | null
           newsletter_id?: string | null
           status?: string
           title?: string
           url?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "curated_links_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curated_links_newsletter_id_fkey"
+            columns: ["newsletter_id"]
+            isOneToOne: false
+            referencedRelation: "newsletters"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       email_addresses: {
         Row: {
@@ -94,39 +112,29 @@ export interface Database {
           action: string
           created_at: string
           id: string
-          list_id: string
-          post_id: string
+          link_id: string
           user_id: string
         }
         Insert: {
           action: string
           created_at?: string
           id: string
-          list_id: string
-          post_id: string
+          link_id: string
           user_id: string
         }
         Update: {
           action?: string
           created_at?: string
           id?: string
-          list_id?: string
-          post_id?: string
+          link_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "interactions_list_id_fkey"
-            columns: ["list_id"]
+            foreignKeyName: "interactions_link_id_fkey"
+            columns: ["link_id"]
             isOneToOne: false
-            referencedRelation: "lists"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "interactions_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
+            referencedRelation: "curated_links"
             referencedColumns: ["id"]
           },
           {
@@ -138,11 +146,42 @@ export interface Database {
           }
         ]
       }
+      issues: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          issue_key: string
+          issue_number: number | null
+          newsletter_id: string | null
+          web_link: string | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          issue_key: string
+          issue_number?: number | null
+          newsletter_id?: string | null
+          web_link?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          issue_key?: string
+          issue_number?: number | null
+          newsletter_id?: string | null
+          web_link?: string | null
+        }
+        Relationships: []
+      }
       links: {
         Row: {
           created_at: string
           description: string | null
           id: string
+          issue_id: string | null
           link_key: string | null
           newsletter_id: string
           title: string
@@ -152,8 +191,9 @@ export interface Database {
           created_at?: string
           description?: string | null
           id?: string
+          issue_id?: string | null
           link_key?: string | null
-          newsletter_id?: string
+          newsletter_id: string
           title: string
           url: string
         }
@@ -161,12 +201,28 @@ export interface Database {
           created_at?: string
           description?: string | null
           id?: string
+          issue_id?: string | null
           link_key?: string | null
           newsletter_id?: string
           title?: string
           url?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "links_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "links_newsletter_id_fkey"
+            columns: ["newsletter_id"]
+            isOneToOne: false
+            referencedRelation: "newsletters"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       lists: {
         Row: {
@@ -241,18 +297,21 @@ export interface Database {
           created_at: string
           id: string
           name: string
+          newsletter_key: string | null
           sender: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          newsletter_key?: string | null
           sender?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          newsletter_key?: string | null
           sender?: string | null
         }
         Relationships: []

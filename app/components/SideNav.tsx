@@ -22,11 +22,11 @@ import { Logo } from './Logo'
 type LinkItemProps = {
   name: string
   icon: IconType
-  to: 'feed' | 'lists' | 'discover'
+  to: 'links' | 'lists' | 'discover'
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Feed', icon: FiHome, to: 'feed' },
+  { name: 'Links', icon: FiHome, to: 'links' },
   { name: 'My lists', icon: FiLayers, to: 'lists' },
   { name: 'Discover', icon: FiCompass, to: 'discover' },
 ]

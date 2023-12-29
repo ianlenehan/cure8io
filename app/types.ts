@@ -16,16 +16,9 @@ export type Curation = {
   userName: string
 }
 
-export type Link = {
-  comment: string
-  curatorId: string
-  curatorName: string
-  date: Date
-  image: string
-  title: string
-  url: string
-  id: string
-}
+export type CuratedLink = Database['public']['Tables']['curated_links']['Row']
+
+export type Link = Database['public']['Tables']['links']['Row']
 
 export type List = Database['public']['Tables']['lists']['Row']
 
@@ -38,6 +31,10 @@ export type Post = Database['public']['Tables']['posts']['Row']
 export type Subscription = Database['public']['Tables']['subscriptions']['Row']
 
 export type Interaction = Database['public']['Tables']['interactions']['Row']
+
+export type Issue = Database['public']['Tables']['issues']['Row']
+
+export type Newsletter = Database['public']['Tables']['newsletters']['Row']
 
 export type ListErrors = {
   name?: string[] | undefined

@@ -29,7 +29,7 @@ import { PasswordInput } from '~/components/PasswordInput'
 export const loader = async ({ request }: LoaderArgs) => {
   const { session } = await getSupabaseSession(request)
   if (session) {
-    return redirect('/feed')
+    return redirect('/links')
   }
 
   return null
@@ -58,10 +58,12 @@ export default function Login() {
     const { error, data } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       // enable this in dev only - configure in supabase https://supabase.com/dashboard/project/uhgsbvjanbwdcnmpsowu/auth/url-configuration
-      // options: {
-      //   redirectTo: 'http://localhost:3000',
-      // },
+      options: {
+        redirectTo: 'http://localhost:3000',
+      },
     })
+    console.log('🚀 ~ file: login.tsx:59 ~ signInWithGoogle ~ data:', data)
+    console.log('🚀 ~ file: login.tsx:65 ~ signInWithGoogle ~ error:', error)
 
     if (error) {
       throw new Error(error.message)
@@ -73,6 +75,7 @@ export default function Login() {
 
     try {
       const result = schema.safeParse({ email, password })
+      console.log('🚀 ~ file: login.tsx:76 ~ signIn ~ result:', result)
       if (!result.success) {
         setErrors(result.error.format())
         return

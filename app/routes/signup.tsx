@@ -37,7 +37,7 @@ type FormattedErrors = z.inferFormattedError<typeof schema>
 export const loader = async ({ request }: LoaderArgs) => {
   const { session } = await getSupabaseSession(request)
   if (session) {
-    return redirect('/feed')
+    return redirect('/links')
   }
 
   return null
@@ -60,7 +60,7 @@ export default function Signup() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       // options: {
-      //   redirectTo: 'http://localhost:3000/feed',
+      //   redirectTo: 'http://localhost:3000/links',
       // },
     })
 

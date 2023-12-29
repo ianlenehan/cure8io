@@ -6,4 +6,5 @@ export type RawLink = {
 
 export type Link = RawLink & {
   newsletter_id: string
+  issue_id?: string
 }

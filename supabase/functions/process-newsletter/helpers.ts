@@ -7,6 +7,18 @@ const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+export const getDefaultDate = () => {
+  const today = new Date()
+
+  // Get the year, month, and day
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0') // Months are zero-based
+  const day = String(today.getDate()).padStart(2, '0')
+
+  // Format the date to YYYY-MM-DD
+  return `${year}-${month}-${day}`
+}
+
 export const getUserIdFromEmail = async (email: string) => {
   const { data: userData, error } = await supabase
     .from('email_addresses')
@@ -26,30 +38,43 @@ export const getUserIdFromEmail = async (email: string) => {
 }
 
 export const getNewsletter = async ({ name, sender }: { name: string; sender: string }) => {
+  const newsletterKey = `${name}_${sender}`
   const { data: newsletterData, error } = await supabase
     .from('newsletters')
-    .select('*')
-    .filter('name', 'ilike', `%${name}%`)
+    .upsert({ name, sender, newsletter_key: newsletterKey }, { onConflict: 'newsletter_key' })
+    .select()
+    .single()
 
   if (error) {
     throw error
   }
 
-  if (!newsletterData || newsletterData.length === 0) {
-    const { data: newsletterData, error } = await supabase
-      .from('newsletters')
-      .insert({ name, sender })
-      .select()
-      .single()
+  return newsletterData
+}
 
-    if (error) {
-      throw error
-    }
+type GetIssueArgs = {
+  newsletterId: string
+  issueNumber?: number
+  date: string
+  webLink?: string
+}
 
-    return newsletterData
+export const getIssue = async ({ newsletterId, issueNumber, webLink, date }: GetIssueArgs) => {
+  const issueKey = `${newsletterId}_${date}`
+  const { data: issueData, error } = await supabase
+    .from('issues')
+    .upsert(
+      { newsletter_id: newsletterId, issue_number: issueNumber, web_link: webLink, issue_key: issueKey, date },
+      { onConflict: 'issue_key' }
+    )
+    .select()
+    .single()
+
+  if (error) {
+    throw error
   }
 
-  return newsletterData
+  return issueData
 }
 
 export const createLink = async (link: Link) => {
@@ -68,7 +93,6 @@ type CuratedLink = Link & {
 }
 
 export const createCuratedLink = async (link: CuratedLink) => {
-  console.log('create curated link', link.title)
   const { error } = await supabase.from('curated_links').upsert(link).select()
 
   if (error) {

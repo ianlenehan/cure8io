@@ -16,7 +16,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const { session } = await getSupabaseSession(request)
 
   if (session) {
-    return redirect('/feed')
+    return redirect('/links')
   }
 
   return null
