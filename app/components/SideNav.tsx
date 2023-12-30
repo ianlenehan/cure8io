@@ -44,9 +44,8 @@ const NavItem = ({ icon, children, to, ...rest }: NavItemProps) => {
     <Link as={RouterLink} to={to} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
       <Flex
         align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
+        py="4"
+        px="6"
         role="group"
         cursor="pointer"
         _hover={{
@@ -79,7 +78,6 @@ type SidebarProps = BoxProps & {
 const SidebarContent = ({ onClose, currentUser, ...rest }: SidebarProps) => {
   return (
     <Box
-      bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
       flexDir="column"
@@ -92,7 +90,7 @@ const SidebarContent = ({ onClose, currentUser, ...rest }: SidebarProps) => {
         <Logo width="150px" />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      <Box flex={1}>
+      <Box flex={1} mt="6">
         {LinkItems.map((link) => (
           <NavItem key={link.name} icon={link.icon} to={link.to}>
             {link.name}
@@ -123,6 +121,7 @@ export const SideNav = ({ children, currentUser }: SideNavProps) => {
   )
 
   const background = useColorModeValue('gray.50', 'gray.900')
+  const pageBackground = useColorModeValue('white', 'gray.700')
 
   if (hideNavSteps) return <>{children}</>
 
@@ -144,7 +143,7 @@ export const SideNav = ({ children, currentUser }: SideNavProps) => {
       </Drawer>
       {/* mobilenav */}
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4" height="100%">
+      <Box bgColor={pageBackground} ml={{ base: 0, md: 60 }} p="4" height="100%">
         {children}
       </Box>
     </Flex>

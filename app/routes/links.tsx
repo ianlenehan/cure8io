@@ -1,12 +1,13 @@
 import type { LoaderArgs, ActionArgs } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useLoaderData, Link as RouterLink, useFetcher } from '@remix-run/react'
-import { Box, Button, Card, CardBody } from '@chakra-ui/react'
+import { Box, Button, useBoolean, useToast } from '@chakra-ui/react'
 import invariant from 'tiny-invariant'
 
-import { PageHeader, LinkCard, ZeroState } from '~/components'
+import { PageHeader, PageContent, LinkCard, ZeroState } from '~/components'
 
 import { getSupabaseSession } from '~/api/auth.server'
+import { useEffect } from 'react'
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData()
@@ -25,6 +26,17 @@ export const action = async ({ request }: ActionArgs) => {
     return json({}, { headers: response.headers })
   }
 
+  if (action === 'delete') {
+    try {
+      const linkId = formData.get('linkId') as string
+      await supabase.from('curated_links').delete().eq('id', linkId)
+      return json({}, { status: 200, headers: response.headers })
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred prunging this link'
+      return json({ error: errorMessage }, { status: 500, headers: response.headers })
+    }
+  }
+
   return json({}, { headers: response.headers })
 }
 
@@ -38,7 +50,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   // const { data: posts, error: postsError } = await supabase.from('subscriptions').select('*')
   const { data: links, error: linksError } = await supabase
     .from('curated_links')
-    .select(`*, newsletters(name), issues(issue_number, date)`)
+    .select(`*, newsletters(*), issues(*)`)
     .eq('user_id', session.user.id)
     .eq('status', 'curated')
     .order('created_at', { ascending: false })
@@ -62,38 +74,66 @@ export const loader = async ({ request }: LoaderArgs) => {
 export default function Links() {
   const { links, interactions } = useLoaderData<typeof loader>()
 
+  const [isPruning, setPruning] = useBoolean()
+  const toast = useToast()
+
   const fetcher = useFetcher()
+  const deletionError = fetcher.data?.error
+
+  useEffect(() => {
+    if (deletionError) {
+      toast({
+        title: 'Error',
+        description: deletionError,
+        status: 'error',
+        duration: 5000,
+      })
+    }
+  }, [deletionError, toast])
 
   return (
     <Box height="100%">
-      <PageHeader title="Links" />
-      <Card maxWidth="960px" variant="outline">
-        <CardBody>
-          {!links?.length ? (
-            <ZeroState title="Nothing here yet!" subtitle="Subscribe to some lists to start seeing posts in your feed!">
-              <Box marginTop="24px">
-                <Button as={RouterLink} colorScheme="brand" to="/discover" size="md" variant="outline">
-                  Discover lists
-                </Button>
-              </Box>
-            </ZeroState>
-          ) : (
-            <Box padding={4} w="100%" sx={{ columnCount: [1, 2], columnGap: '12px' }} mx="auto">
-              {links.map((link) =>
-                link ? (
-                  <LinkCard
-                    key={link.id}
-                    isClicked={interactions?.some((i) => i.link_id === link.id)}
-                    link={link}
-                    mb="12px"
-                    onClick={() => fetcher.submit({ linkId: link.id, action: 'interact' }, { method: 'POST' })}
-                  />
-                ) : null
-              )}
+      <PageHeader title="Links">
+        <Button
+          colorScheme={isPruning ? 'red' : 'green'}
+          onClick={setPruning.toggle}
+          variant={isPruning ? 'outline' : 'solid'}
+        >
+          {isPruning ? 'Stop Pruning' : 'Prune Links'}
+        </Button>
+      </PageHeader>
+
+      <PageContent>
+        {!links?.length ? (
+          <ZeroState title="Nothing here yet!" subtitle="Subscribe to some lists to start seeing posts in your feed!">
+            <Box marginTop="24px">
+              <Button as={RouterLink} colorScheme="brand" to="/discover" size="md" variant="outline">
+                Discover lists
+              </Button>
             </Box>
-          )}
-        </CardBody>
-      </Card>
+          </ZeroState>
+        ) : (
+          <Box padding={4} w="100%" sx={{ columnCount: [1, 2], columnGap: '12px' }} mx="auto">
+            {links.map((link) =>
+              link ? (
+                <LinkCard
+                  isClicked={interactions?.some((i) => i.link_id === link.id)}
+                  isDeleting={
+                    fetcher.submission?.formData?.get('action') === 'delete' &&
+                    fetcher.submission?.formData?.get('linkId') === link.id
+                  }
+                  isPruning={isPruning}
+                  key={link.id}
+                  link={link}
+                  mb="12px"
+                  onPrune={() => fetcher.submit({ linkId: link.id, action: 'delete' }, { method: 'POST' })}
+                  onClick={() => fetcher.submit({ linkId: link.id, action: 'interact' }, { method: 'POST' })}
+                />
+              ) : null
+            )}
+          </Box>
+        )}
+      </PageContent>
     </Box>
   )
 }
